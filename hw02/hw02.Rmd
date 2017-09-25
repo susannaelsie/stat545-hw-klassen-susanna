@@ -26,7 +26,7 @@ gapminder
 
 Thanks to the tidyverse meta-package, this comes back as a nicely formatted tibble, and confirms we are working with a dataframe.
 
-I can also use the ```typeof``` command to see the type or storage model of the object. This comes back as a ```list```. Upon investigating further and recalling info from previous classes, I can conclude that the gapminder dataset is both a list and a dataframe (a specific type of list). Some more info can be [found here] (https://stackoverflow.com/questions/15901224/what-is-difference-between-dataframe-and-list-in-r)
+I can also use the ```typeof``` command to see the type or storage model of the object. This comes back as a ```list```. Upon investigating further and recalling info from previous classes, I can conclude that the gapminder dataset is both a list and a dataframe (a specific type of list). Some more info can be found here: https://stackoverflow.com/questions/15901224/what-is-difference-between-dataframe-and-list-in-r
 
 ```{r}
 typeof(gapminder)
@@ -41,7 +41,7 @@ class(gapminder)
 
 This command confirms that we are working with a table/dataframe. 
 
-To find out how many *columns*/variables, we simply use the ```ncol``` command, and similarly for the number of *rows*/observations
+To find out how many **columns**/variables, we simply use the ```ncol``` command, and similarly for the number of **rows**/observations
 
 ```{r}
 ncol(gapminder)
