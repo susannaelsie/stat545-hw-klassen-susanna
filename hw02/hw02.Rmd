@@ -1,0 +1,24 @@
+
+---
+title: "hw02"
+output: 
+  html_document: 
+    keep_md: yes
+---
+# hw02 RMarkdown File
+
+Fisrt, I'll call up the gapminder dataset and tidyverse package (meta-package that contains dplyr - what we are actually interested in).
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+
+## Smell testing the data
+
+One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? To answer this question, we can use the 
+
+```{r}
+names(gapminder)
+```
+
