@@ -18,13 +18,20 @@ library(tidyverse)
 
 One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? 
 
-Because I have just done some reading about ```dplyr```, I assume (and know from previous assignments) that this is a dataframe, but if I wanted to confirm I could just boldly call up the dataset to see a nicely formatted snippet of the rows and columns and what it is:
+Because I have just done some reading about ```dplyr```, I assume (and know from previous assignments) that this is a dataframe, but if I wanted to confirm I could just call up the dataset to see a nicely formatted snippet of the rows and columns and what it is:
 
 ```{r}
 gapminder
 ```
 
 Thanks to the tidyverse meta-package, this comes back as a nicely formatted tibble, and confirms we are working with a dataframe.
+
+I can also use the ```typeof``` command to see the type or storage model of the object. This comes back as a ```list```. Upon investigating further and recalling info from previous classes, I can conclude that the gapminder dataset is both a list and a dataframe (a specific type of list). Some more info can be [found here] (https://stackoverflow.com/questions/15901224/what-is-difference-between-dataframe-and-list-in-r)
+
+```{r}
+typeof(gapminder)
+```
+
 
 We can can also use the ```class``` command to see what type of data we are working with:
 
@@ -34,10 +41,17 @@ class(gapminder)
 
 This command confirms that we are working with a table/dataframe. 
 
-To find out how many variables or columns, we simply use the ```ncol``` command, and similarly for the number of rows/observations
+To find out how many *columns*/variables, we simply use the ```ncol``` command, and similarly for the number of *rows*/observations
 
 ```{r}
 ncol(gapminder)
-nobvs(gapminder)
+nrow(gapminder)
 ```
 
+Another way to get this information all at once (with one command) is the use the ```summarize``` function, but this requires some counting and deciphering to get the same information :
+
+```{r}
+summary(gapminder)
+```
+
+However, if you really want quick and specific information about the data, using the discrete commands such as ```ncol``` and ```nrow``` could be helpful. 
