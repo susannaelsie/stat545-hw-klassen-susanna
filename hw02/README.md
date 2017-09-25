@@ -1,4 +1,4 @@
-#Welcome to my hw02!
+# Welcome to my hw02!
 
 ## Some notes before I begin the actual work
 
