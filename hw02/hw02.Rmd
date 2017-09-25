@@ -16,9 +16,28 @@ library(tidyverse)
 
 ## Smell testing the data
 
-One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? To answer this question, we can use the 
+One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? 
+
+Because I have just done some reading about ```dplyr```, I assume (and know from previous assignments) that this is a dataframe, but if I wanted to confirm I could just boldly call up the dataset to see a nicely formatted snippet of the rows and columns and what it is:
 
 ```{r}
-names(gapminder)
+gapminder
+```
+
+Thanks to the tidyverse meta-package, this comes back as a nicely formatted tibble, and confirms we are working with a dataframe.
+
+We can can also use the ```class``` command to see what type of data we are working with:
+
+```{r}
+class(gapminder)
+```
+
+This command confirms that we are working with a table/dataframe. 
+
+To find out how many variables or columns, we simply use the ```ncol``` command, and similarly for the number of rows/observations
+
+```{r}
+ncol(gapminder)
+nobvs(gapminder)
 ```
 
