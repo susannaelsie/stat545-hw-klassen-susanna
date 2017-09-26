@@ -13,6 +13,8 @@ I used the assignment to take a more in-depth look at changes in life expectancy
 
 ## General notes on process
 
+All in all, I had a lot more fun with this assignment, exploring various links to resources to help me with the code (both from within and outside of this course), and actually thinking through plotting the data to answer questions I was curious about. 
+
 #### Creating new folders on Github
 
 Even in setting up this second homework I learned something new. One cannot create an empty folder on github the way one would on their computer folder/filing system. And there is no 'create new folder button' either! Instead, I went the 'create new file'route, and to create this file wihtin a folder one just needs to type a slash (/) following the folder name, and then create a file within that folder, and commit this.
@@ -34,11 +36,9 @@ I often referred to the <a href="http://stat545.com/cm005-notes_and_exercises.ht
 
 **Stackoverflow** -- the answers to many questions
 
-Introduction to R course notes-- similar things to STAT 545 but with slight variations on examples
-https://ateucher.github.io/rcourse_site/03-plotting.html
+<a href="https://ateucher.github.io/rcourse_site/03-plotting.html">**Introduction to R course notes**</a> - similar content to STAT 545 course notes but with slight variations on examples
 
 <a href="http://rmarkdown.rstudio.com/authoring_basics.html">**R Markdown Basics**</a> from RStudio
-
 
 ## Section 5 - Doing more
 
