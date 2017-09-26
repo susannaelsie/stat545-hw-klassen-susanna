@@ -16,3 +16,26 @@ I'm not sure if I did this the most efficient or elegant way, but I did this via
 This homework uses the ```dplyr``` package. Find more info about this package here: 
 http://stat545.com/block009_dplyr-intro.html
 
+
+
+Stackoverflow -- the answers to many questions
+
+Introduction to R course notes-- similar things to STAT 545 but with slight variations on examples
+https://ateucher.github.io/rcourse_site/03-plotting.html
+
+
+Simply stats thread for section 5.
+
+Specifically, this thread:
+
+After doing that I look for weird quirks, like if there are missing values or outliers like @feralparakeet
+
+@hmason ALL THE DESCRIPTIVES. Well, after reviewing the codebook, of course. — Vickie Edwards (@feralparakeet) June 12, 2014
+
+and like @cpwalker07
+
+@hmason count # rows, read every column header — Chris Walker (@cpwalker07) June 12, 2014
+
+and like @toastandcereal
+
+@hmason@mispagination jot down number of rows. That way I can assess right away whether I've done something dumb later on. — Jessica Balsam (@toastandcereal) June 12, 2014

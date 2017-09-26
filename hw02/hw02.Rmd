@@ -20,9 +20,9 @@ library(gapminder)
 library(tidyverse)
 ```
 
-## Smell testing the data
+## 1. Exploring the data
 
-#### Dataset type/class
+#### 1.1 Dataset type/class
 
 One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? 
 
@@ -49,7 +49,7 @@ class(gapminder)
 
 This command confirms that we are working with a table/dataframe. 
 
-#### Dataset size & extent
+#### 1.2 Dataset size & extent
 
 To find out how many **columns**/variables, we simply use the ```ncol``` command, and similarly for the number of **rows**/observations
 
@@ -66,7 +66,7 @@ summary(gapminder)
 
 However, if you really want quick and specific information about the data, using the discrete commands such as ```ncol``` and ```nrow``` could be helpful. 
 
-#### Variable types
+#### 1.3 Variable types
 
 To isolate one variable in the data frame, you use the $ sign. We can write code to tell us each variable type individually. The following commands tell us that each variable is an integer, apart from ```lifeExp``` and ```gdpPercap```.
 
@@ -79,11 +79,11 @@ typeof(gapminder$pop)
 typeof(gapminder$gdpPercap)
 ```
 
-## Investigate individual variables
+## 2. Investigate individual variables
 
 I'd like to take a closer look at lifeExp (quantitative - double) by country (categorical - integer type).
 
-#### Possible values and range
+#### 2.1 Possible values and range
 
 First I'll look at the possible values for each category, starting with the possible entries for country. I can use ```levels``` to call up the full list of countries in the dataset, and ```nlevels``` to see the number of possible countries. I won't type the full list, but there are 142 countries in this dataset!
 
@@ -100,7 +100,7 @@ summary(gapminder$lifeExp)
 
 The summary function gives us the minimum value (23.60), the maximum value (82.60), as well as the median and the mean. 
 
-#### Spread and distribution 
+#### 2.2 Spread and distribution 
 
 I cannot make a histogram of country to see the distribution because it is not numeric, however, I can use the ```table``` command to build a contingency table of the counts for each country entry.
 
@@ -147,9 +147,9 @@ This allows us to see quite quickly that the histogram is slightly skewed to the
 summary(gapminder$lifeExp)
 ```
 
-## Exploring various plot types
+## 3. Exploring various plot types
 
-#### Scatterplots
+#### 3.1 Scatterplots
 
 ```{r}
 ggplot(gapminder, aes(x = year, y = lifeExp)) # This just sets up the axes by assigning variables -- links certain scale to geometric object
@@ -187,21 +187,21 @@ p <- p + aes(color = continent) + geom_point() + geom_smooth(lwd = 3, se = FALSE
 p + ggtitle("Life expectancy over time by continent") # adding a title (not sure why left justified)
 ```
 
-#### Bar charts
+#### 3.2 Bar charts
 
 ```{r}
 ggplot(gapminder, aes(x = continent)) + geom_bar()
 
 ```
 
-#### Density plot
+#### 3.3 Density plot
 
 ```{r}
 ggplot(subset(gapminder, continent != "Oceania"), #removing Oceania to simplify because only 2 countries...
               aes(x = lifeExp, color = continent)) + geom_density()
 ```
 
-#### Boxplots (1 categorical, 1 quantitative)
+#### 3.4 Boxplots (1 categorical, 1 quantitative)
 
 ```{r}
 ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot(aes(colour=continent))
@@ -210,17 +210,17 @@ ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot(aes(colour=con
 
 
 
-## Using `filter()` and `select()`
+## 4. Using `filter()` and `select()`
 
 I recently listened to a podcast about gender equity and political changes post-genocide in Rwanda. As such, I'd like to have  a closer look at gdpPercap and lifeExp in Rwanda chronologically. First I'll use the ```filter``` function to pull up the data from Rwanda and see what we're working with.
 
-
+#### 4.1 Life Expectancy in Rwanda
 
 ```{r}
 filter(gapminder, country=="Rwanda")
 ```
 
-Now, I'll use the filter function and piping to make a scatterplot of these variables over time. 
+Now, I'll use the filter function and piping to make a scatterplot of life expectancy over time. 
 
 ```{r}
 gapminder %>% 
@@ -230,14 +230,21 @@ ggplot(aes(x = year, y = lifeExp)) +
   geom_smooth(se=FALSE) #removing standard error and allowing for curvy line
 ```
 
-It might be interesting to look at several countries in Africa during a smaller subset of years...
+#### 4.2 Life Expectancy in Africa
 
-```{r}
-gapminder %>%
+It might be interesting to look at life expectancy in other/all countries in Africa during a smaller subset of years...
+
+```{r fig.width=12}
+gapminder %>% # altered figure width so we could see the lines better
   filter(continent == "Africa", year >= 1970) %>%
-  ggplot(aes(year, lifeExp, group=country, colour=country))
-  geom_line(alpha=0.2)
+  ggplot(aes(year, lifeExp, group=country, colour=country)) +
+  geom_point(alpha=0.3) +
+  geom_line()
 ```
+
+While this is a lot to digest/see, we can clearly see a few outliers in the data at the upper and lower ends
+
+#### 4.3 Life expectancy in Rwanda, Afghanistan, Haiti & Ireland
 
 Then maybe it would be nice to take a look at a few coutries that may show interesting temporal changes in life expectancy. To do this I'd like to call up the data for 4 countries from 4 different continents, and take a closer look at some years more recently...
 
@@ -257,5 +264,17 @@ gapminder %>%
   geom_point() +
   geom_line()
 ```
+From this we can see some clear differences between these four countries,and notably the swift and severe decline of life expectancy in Rwanda (corresponding to the 1994 genocide). Note that this minimum is actually in 1992 - there is no data for 1994 (and likely the true minimum is not captured).
+
+## 5. But I want to do more!
+
+Funnily enough, I had not seen this part of the homework before making my selection (or filters, rather...) above.
+
+
+```{r}
+filter(gapminder, country == c("Rwanda", "Afghanistan"))
+```
+
+The analyst did succeed in calling up some of the data entries for Rwanda and Afghanistan from the Gapminder dataset. However, these do not seem to be all of the entries for each of these countries. The thread posted on the course website from Simply Statistics helped me see this. 
 
 
