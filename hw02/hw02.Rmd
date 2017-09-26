@@ -276,6 +276,6 @@ Funnily enough, I had not seen this part of the homework before making my select
 filter(gapminder, country == c("Rwanda", "Afghanistan"))
 ```
 
-The analyst did succeed in calling up some of the data entries for Rwanda and Afghanistan from the Gapminder dataset. However, these do not seem to be all of the entries for each of these countries. Instead, the analyst has gotten one unique entry for each year, with half corresponding to each of the two countries. Upon further investigation, I can see the 
+The analyst did succeed in calling up some of the data entries for Rwanda and Afghanistan from the Gapminder dataset. However, these do not seem to be all of the entries for each of these countries. Instead, the analyst has gotten one unique entry for each year, with half corresponding to each of the two countries. I have queried this command (`combine`), but can't quite reason why it returns unique values to each year... look forward to hearing the answer!
 
 
