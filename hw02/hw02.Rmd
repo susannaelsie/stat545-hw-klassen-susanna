@@ -4,7 +4,6 @@ title: "hw02"
 output: 
   html_document: 
     keep_md: yes
-    knitr::kable()
 ---
 
 ```{r}
@@ -164,12 +163,9 @@ p <- ggplot(gapminder, aes(x = year, y = lifeExp)) # this initializes the scatte
 Let's also look at a scatterplot by two continuous variables to give us the full 'scatter' effect...
 
 ```{r}
-ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) # This just sets up the axes by assigning variables
-
-ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) + #adding the geom_point sets up the relationship for the scatterplot
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) 
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) + 
   geom_point()
-
-p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) # this initializes the scatterplot
 ```
 Let's make that scatterplot a bit more visually appealing...
 
