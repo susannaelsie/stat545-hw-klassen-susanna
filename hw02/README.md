@@ -24,18 +24,20 @@ Introduction to R course notes-- similar things to STAT 545 but with slight vari
 https://ateucher.github.io/rcourse_site/03-plotting.html
 
 
-Simply stats thread for section 5.
+## Section 5 - Doing more
 
-Specifically, this thread:
+The Simply stats thread for section 5 was helpful generally, but also tipped me off to the fact that the code wasn't getting all of the values for each country. Specifically, this thread:
 
-After doing that I look for weird quirks, like if there are missing values or outliers like @feralparakeet
+> After doing that I look for weird quirks, like if there are missing values or outliers like @feralparakeet
 
-@hmason ALL THE DESCRIPTIVES. Well, after reviewing the codebook, of course. — Vickie Edwards (@feralparakeet) June 12, 2014
+> @hmason ALL THE DESCRIPTIVES. Well, after reviewing the codebook, of course. — Vickie Edwards (@feralparakeet) June 12, 2014
 
-and like @cpwalker07
+> and like @cpwalker07
 
-@hmason count # rows, read every column header — Chris Walker (@cpwalker07) June 12, 2014
+> @hmason count # rows, read every column header — Chris Walker (@cpwalker07) June 12, 2014
 
-and like @toastandcereal
+> and like @toastandcereal
 
-@hmason@mispagination jot down number of rows. That way I can assess right away whether I've done something dumb later on. — Jessica Balsam (@toastandcereal) June 12, 2014
+> @hmason@mispagination jot down number of rows. That way I can assess right away whether I've done something dumb later on. — Jessica Balsam (@toastandcereal) June 12, 2014
+
+I explored the ```knitr:kable``` tip, but was unable to install the kable package (assuming I had to). I did find this <a href="http://kbroman.org/knitr_knutshell/pages/figs_tables.html">'knitr in a knutshell'</a> resource that would have been helpful had I more time. 

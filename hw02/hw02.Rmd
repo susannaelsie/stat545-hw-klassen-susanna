@@ -4,6 +4,7 @@ title: "hw02"
 output: 
   html_document: 
     keep_md: yes
+    knitr::kable()
 ---
 
 ```{r}
@@ -260,7 +261,7 @@ Now we can look at these changes for each country over time graphically using th
 ```{r}
 gapminder %>% 
     filter(country %in% c("Rwanda", "Afghanistan", "Haiti", "Ireland")) %>% 
-  ggplot(aes(year, lifeExp, colour=continent)) +
+  ggplot(aes(year, lifeExp, colour=country)) +
   geom_point() +
   geom_line()
 ```
@@ -268,13 +269,13 @@ From this we can see some clear differences between these four countries,and not
 
 ## 5. But I want to do more!
 
-Funnily enough, I had not seen this part of the homework before making my selection (or filters, rather...) above.
+Funnily enough, I had not seen this part of the homework before making my selection (or filters, rather...) of countries above.
 
 
 ```{r}
 filter(gapminder, country == c("Rwanda", "Afghanistan"))
 ```
 
-The analyst did succeed in calling up some of the data entries for Rwanda and Afghanistan from the Gapminder dataset. However, these do not seem to be all of the entries for each of these countries. The thread posted on the course website from Simply Statistics helped me see this. 
+The analyst did succeed in calling up some of the data entries for Rwanda and Afghanistan from the Gapminder dataset. However, these do not seem to be all of the entries for each of these countries. Instead, the analyst has gotten one unique entry for each year, with half corresponding to each of the two countries. Upon further investigation, I can see the 
 
 
