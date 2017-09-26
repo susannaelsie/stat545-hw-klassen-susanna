@@ -5,7 +5,13 @@ output:
   html_document: 
     keep_md: yes
 ---
-# hw02 RMarkdown File
+
+```{r}
+#+ setup, include = FALSE
+library(knitr)
+opts_chunk$set(fig.path = 'figure/scatterplot-', error = TRUE)
+```
+
 
 Fisrt, I'll call up the gapminder dataset and tidyverse package (meta-package that contains dplyr - what we are actually interested in).
 
@@ -15,6 +21,8 @@ library(tidyverse)
 ```
 
 ## Smell testing the data
+
+#### Dataset type/class
 
 One of the first questions to ask when working with a new dataset would be, what kind of form/structure does this dataset have? 
 
@@ -41,6 +49,8 @@ class(gapminder)
 
 This command confirms that we are working with a table/dataframe. 
 
+#### Dataset size & extent
+
 To find out how many **columns**/variables, we simply use the ```ncol``` command, and similarly for the number of **rows**/observations
 
 ```{r}
@@ -55,3 +65,197 @@ summary(gapminder)
 ```
 
 However, if you really want quick and specific information about the data, using the discrete commands such as ```ncol``` and ```nrow``` could be helpful. 
+
+#### Variable types
+
+To isolate one variable in the data frame, you use the $ sign. We can write code to tell us each variable type individually. The following commands tell us that each variable is an integer, apart from ```lifeExp``` and ```gdpPercap```.
+
+```{r}
+typeof(gapminder$country)
+typeof(gapminder$continent)
+typeof(gapminder$year)
+typeof(gapminder$lifeExp)
+typeof(gapminder$pop)
+typeof(gapminder$gdpPercap)
+```
+
+## Investigate individual variables
+
+I'd like to take a closer look at lifeExp (quantitative - double) by country (categorical - integer type).
+
+#### Possible values and range
+
+First I'll look at the possible values for each category, starting with the possible entries for country. I can use ```levels``` to call up the full list of countries in the dataset, and ```nlevels``` to see the number of possible countries. I won't type the full list, but there are 142 countries in this dataset!
+
+```{r}
+levels(gapminder$country)
+nlevels(gapminder$country)
+```
+
+OK now let's do that for our quantitative (double) variable - ```lifeExp```. Because we can summarize the range of this variable numerically, we will do this diffently. 
+
+```{r}
+summary(gapminder$lifeExp)
+```
+
+The summary function gives us the minimum value (23.60), the maximum value (82.60), as well as the median and the mean. 
+
+#### Spread and distribution 
+
+I cannot make a histogram of country to see the distribution because it is not numeric, however, I can use the ```table``` command to build a contingency table of the counts for each country entry.
+
+```{r}
+table(gapminder$country)
+```
+
+This shows me that there are 12 entries for each country, which should each correspond to a year in the series. For fun, I will confirm this assumption...
+
+```{r}
+list(gapminder$year)
+```
+
+Though not the most elegant way of doing it, this confirms that there are 12 unique rows of data for each country, corresponding to distinct years.
+
+Though a bit silly, we can also see this by making a histogram of ```year``` (12 values all with an equal frequency).
+
+```{r}
+hist(gapminder$year)
+```
+
+Now let's look at the spread or distribution of ```lifeExp``` - only let's do it visually using a histogram. I've gone ahead and looked up some formatting and added lines of central tendency so we can view these values on the histogram (and a legend to explain what they are!).
+
+```{r}
+hist(gapminder$lifeExp,
+     col = "peachpuff", # now I am really curious to know what other colour options there are...
+     border = "black")
+abline(v = mean(gapminder$lifeExp), # adding lines for central tendency
+	col = "royalblue",
+	lwd = 2)
+abline(v = median(gapminder$lifeExp),
+	col = "red",
+	lwd = 2)
+legend(x = "topright", # location of legend within plot area
+	c("Mean", "Median"),
+	col = c("royalblue", "red"),
+lwd = c( 2, 2))
+```
+
+This allows us to see quite quickly that the histogram is slightly skewed to the left, as there are many entries/rows of data with values between 70 and 75. Using the ```summary``` function we can call up the precise values of the median (60.71), which is slightly higher than the mean (59.47). 
+
+
+```{r}
+summary(gapminder$lifeExp)
+```
+
+## Exploring various plot types
+
+#### Scatterplots
+
+```{r}
+ggplot(gapminder, aes(x = year, y = lifeExp)) # This just sets up the axes by assigning variables -- links certain scale to geometric object
+
+ggplot(gapminder, aes(x = year, y = lifeExp)) + #adding the geom_point sets up the relationship for the scatterplot
+  geom_point()
+
+p <- ggplot(gapminder, aes(x = year, y = lifeExp)) # this initializes the scatterplot
+```
+
+Let's also look at a scatterplot by two continuous variables to give us the full 'scatter' effect...
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) # This just sets up the axes by assigning variables
+
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) + #adding the geom_point sets up the relationship for the scatterplot
+  geom_point()
+
+p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) # this initializes the scatterplot
+```
+Let's make that scatterplot a bit more visually appealing...
+
+```{r}
+p + geom_point() + scale_x_log10() # transforms the scatterplot to log scale
+p <- p + scale_x_log10() # re-defining 'p' to integrate the transformation
+p + geom_point(aes(color = continent)) # adding colur based on continent
+```
+
+After finding some additional notes re making fancy scatterplots, I want to add 
+
+```{r}
+p + geom_point() + scale_x_log10() # transforms the scatterplot to log scale
+p <- p + scale_x_log10() # re-defining 'p' to integrate the transformation
+p <- p + aes(color = continent) + geom_point() + geom_smooth(lwd = 3, se = FALSE)
+p + ggtitle("Life expectancy over time by continent") # adding a title (not sure why left justified)
+```
+
+#### Bar charts
+
+```{r}
+ggplot(gapminder, aes(x = continent)) + geom_bar()
+
+```
+
+#### Density plot
+
+```{r}
+ggplot(subset(gapminder, continent != "Oceania"), #removing Oceania to simplify because only 2 countries...
+              aes(x = lifeExp, color = continent)) + geom_density()
+```
+
+#### Boxplots (1 categorical, 1 quantitative)
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot(aes(colour=continent))
+```
+
+
+
+
+## Using `filter()` and `select()`
+
+I recently listened to a podcast about gender equity and political changes post-genocide in Rwanda. As such, I'd like to have  a closer look at gdpPercap and lifeExp in Rwanda chronologically. First I'll use the ```filter``` function to pull up the data from Rwanda and see what we're working with.
+
+
+
+```{r}
+filter(gapminder, country=="Rwanda")
+```
+
+Now, I'll use the filter function and piping to make a scatterplot of these variables over time. 
+
+```{r}
+gapminder %>% 
+  filter(country == "Rwanda") %>%
+ggplot(aes(x = year, y = lifeExp)) + 
+   geom_point() + # no need for alpha transparency
+  geom_smooth(se=FALSE) #removing standard error and allowing for curvy line
+```
+
+It might be interesting to look at several countries in Africa during a smaller subset of years...
+
+```{r}
+gapminder %>%
+  filter(continent == "Africa", year >= 1970) %>%
+  ggplot(aes(year, lifeExp, group=country, colour=country))
+  geom_line(alpha=0.2)
+```
+
+Then maybe it would be nice to take a look at a few coutries that may show interesting temporal changes in life expectancy. To do this I'd like to call up the data for 4 countries from 4 different continents, and take a closer look at some years more recently...
+
+```{r}
+gapminder %>% 
+    filter(country %in% c("Rwanda", "Afghanistan", "Haiti", "Ireland"), 
+           year >= 1970) %>% 
+    select(country, year, lifeExp)
+```
+
+Now we can look at these changes for each country over time graphically using the ggplot functions.
+
+```{r}
+gapminder %>% 
+    filter(country %in% c("Rwanda", "Afghanistan", "Haiti", "Ireland")) %>% 
+  ggplot(aes(year, lifeExp, colour=continent)) +
+  geom_point() +
+  geom_line()
+```
+
+
