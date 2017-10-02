@@ -31,3 +31,5 @@ I chose to attack the following 3 tasks from the menu (with a table and a figure
 
 * I created the hw03 file and associated readme.md file quickly and easily on my online github repo, then worked on adding to my readme.md file as well as my Rmarkdown assignment file on my local repo (committing, pulling, and pushing to the online repo periodically).
 
+* My first task to look at the spread of GDP per capita by continent brought me back to <a href="http://stat545.com/block010_dplyr-end-single-table.html#group_by-is-a-mighty-weapon">this course resource on dplyr functions</a> to help me use ```group_by``` to look at that specific variable by continent
+
