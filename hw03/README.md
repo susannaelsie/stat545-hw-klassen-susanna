@@ -34,4 +34,6 @@ I chose to attack the following 3 tasks from the menu (with a table and a figure
 #### 1. Spread of GDP per capita by continent
 
 * My first task to look at the spread of GDP per capita by continent brought me back to <a href="http://stat545.com/block010_dplyr-end-single-table.html#group_by-is-a-mighty-weapon">this course resource on dplyr functions</a> to help me use ```group_by``` to look at that specific variable by continent
+  * The ** General summarization ** section was particularly relevant
+  
 
