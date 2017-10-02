@@ -8,8 +8,6 @@ I enjoyed the idea of using this assignment as a type of <a href="https://en.wik
 
 ## Reflection on Process
 
-I am starting to get the hang of this workflow (or at least, one that works for me!).
-
 #### Setting up the hw03 project
 
 * With each consecutive assignment I have learned something new (and extremely basic) about organizing repos and how to set up files/folders on github. This time I was receiving an error message when I was trying to create a new project on my local R repo for hw03.
