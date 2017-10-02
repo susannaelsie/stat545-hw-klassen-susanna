@@ -18,7 +18,7 @@ I enjoyed the idea of using this assignment as a type of <a href="https://en.wik
 >remote: Not Found
 >fatal: repository ‘https://github.com/susannaelsie/stat545-hw-klassen-susanna/tree/master/hw03/' not found
 
- * I rectified the mistake by first pulling the updates to my larger hw folder to my local repo, then creating a new rproject within the hw03 folder, then pushing those changes to github. It just took a bit of reasoning and trial and error to figure this (simple thing) out. I used <a href+"http://stat545.com/block002_hello-r-workspace-wd-project.html">this STAT 545 resource on the basic working directory and RStudio projects</a> to help remind me how things worked.
+ * I rectified the mistake by first pulling the updates to my larger hw folder to my local repo, then creating a new rproject within the hw03 folder, then pushing those changes to github. It just took a bit of reasoning and trial and error to figure this (simple thing) out. I used <a href="http://stat545.com/block002_hello-r-workspace-wd-project.html">this STAT 545 resource on the basic working directory and RStudio projects</a> to help remind me how things worked.
 
 
 #### Actually doing the assignment
