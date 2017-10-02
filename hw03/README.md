@@ -10,7 +10,7 @@ I chose to attack the following 3 tasks from the menu (with a table and a figure
 
 ## Reflection on Process
 
-#### Setting up the hw03 project
+### Setting up the hw03 project
 
 * I enjoyed the idea of using this assignment as a type of <a href="https://en.wikipedia.org/wiki/Sampler_(needlework)">"sampler"</a>, and held this concept in mind as I built my Rmarkdown file.
 
@@ -25,9 +25,15 @@ I chose to attack the following 3 tasks from the menu (with a table and a figure
    * I rectified the mistake by first pulling the updates to my larger hw folder to my local repo, then creating a new rproject within the hw03 folder, then pushing those changes to github. It just took a bit of reasoning and trial and error to figure this (simple thing) out. I used <a href="http://stat545.com/block002_hello-r-workspace-wd-project.html">this STAT 545 resource on the basic working directory and RStudio projects</a> to help remind me how things worked.
 
 
-#### Actually doing the assignment
+### Actually doing the assignment
 
 * To accomplish this assignment more efficiently than the last, I had my ```ggplot2``` and markdown syntax cheat sheets open.
 
 * I created the hw03 file and associated readme.md file quickly and easily on my online github repo, then worked on adding to my readme.md file as well as my Rmarkdown assignment file on my local repo (committing, pulling, and pushing to the online repo periodically).
+
+#### 1. Spread of GDP per capita by continent
+
+* My first task to look at the spread of GDP per capita by continent brought me back to <a href="http://stat545.com/block010_dplyr-end-single-table.html#group_by-is-a-mighty-weapon">this course resource on dplyr functions</a> to help me use ```group_by``` to look at that specific variable by continent
+  * The **General summarization** section was particularly relevant
+  
 
