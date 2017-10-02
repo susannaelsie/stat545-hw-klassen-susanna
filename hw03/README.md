@@ -3,6 +3,11 @@
 
 This assignment uses the ```Gapminder``` dataset using ```dplyr``` as the data manipulation tool, and ```ggplot2``` as the visualization tool. 
 
+I chose to attack the following 3 tasks from the menu (with a table and a figure for each):
+1. Look at the spread of GDP per capita within the continents.
+2. How is life expectancy changing over time on different continents?
+3. Find countries with interesting stories. Open-ended and, therefore, hard. Promising but unsuccessful attempts are encouraged. This will generate interesting questions to follow up on in class.
+
 ## Reflection on Process
 
 #### Setting up the hw03 project
