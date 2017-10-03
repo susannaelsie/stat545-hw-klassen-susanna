@@ -10,7 +10,7 @@ output:
 ### By Susanna Klassen
 
 ```{r}
-suppressPackageStartupMessages(library(tidyverse))  #Note to inquire/remind myself about the functionality of these options
+suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(gapminder))
 knitr::opts_chunk$set(fig.width=4, fig.height=3)
 ```
@@ -38,17 +38,10 @@ To look at the spread of GDP per capita by continent I will use the `groupby` fu
 ```{r}
 gapminder %>%
   group_by(continent) %>%
-summarize(min(gdpPercap), max(gdpPercap), mean(gdpPercap)) 
+summarize(min_gdpPercap=min(gdpPercap), max_gdpPercap=max(gdpPercap), mean_gdpPercap=mean(gdpPercap)) 
 ```
 
-Thinking there might be a more elegant way of getting this info (all measures of the same variable)
 
-```{r}
-gapminder %>%
-  group_by(continent) %>%
-summarize_each(funs(min, max, mean), gdpPercap) # could also add other variables here if I wanted these same stats for multiple variables
-```
-That also worked!
 
 #### 1.2 Figure
 
@@ -75,7 +68,12 @@ gapminder %>%
 
 This table doesn't really allow me to see much, actually. If I were to create a new variable that is the average across countries (a strange thing to do in this particular case, but hey...)
 
-
+```{r}
+gapminder %>%
+  arrange(year) %>%
+  group_by(continent) %>%
+  mutate(lifeExp_change = lifeExp[year==2007] - lifeExp[year==1997])
+```
 
 #### 2.2 Figure
 
@@ -85,46 +83,66 @@ As I'm wanting to plot two continuous variables for this task, I'll want to use 
 gapminder %>%
   group_by(continent) %>%
   select(country, continent, year, lifeExp) %>%
-  ggplot(aes(year, lifeExp,
-            color = continent)) + 
+  ggplot(aes(year, lifeExp, color = continent)) + 
   geom_point() +
   geom_smooth()
 ```
-
+This scatterplot aggregated at the scale of a continent is a fairly simple figure both to produce and interpret.
 
 ### 3. Countries with interesting stories
 
 #### 3.1 Exploring the Americas
 
-My first thought is to explore GDP per capita in Venezuela, which has had a somewhat volatile political and economic history (particularly in the last few yeasrs). But before I dive into a specific country, I might as well look at trends in that continent more broadly to try to pick out some potentially interesting stories (which means I'll need to look more broadly at the Americas).
+My first thought is to explore GDP per capita in Venezuela, which has had a somewhat volatile political and economic history (particularly in the last few years). But before I dive into a specific country, I might as well look at trends in that continent more broadly to try to pick out some potentially interesting stories.
 
 #### 3.1.1 Life expectancy in the Americas
 
+Let's look at the average value of life expectancy over the last 20 years of the dataset by country (in the Americas). I am going to assign an object (t3.1) to this table, then plot it.
+
+```{r}
+t3.1 <- gapminder %>%
+  filter(continent == "Americas", year >= 1987) %>%
+  group_by(country)%>%
+  summarize(mean_lifeExp=mean(lifeExp))
+```
+
+Test that to see if it worked...
+```{r}
+t3.1
+```
+
+Now let's plot that:
+
+```{r}
+t3.1 + ggplot() +
+  geom_point()
+```
+
 
 ```{r fig.width=12, fig.height=8}
-gapminder %>% # altered figure width so we could see the lines better
+gapminder %>% # altered figure width (12) and height (8) so we could see the lines better
   filter(continent == "Americas") %>%
   ggplot(aes(year, lifeExp, group=country, colour=country)) +
   geom_point(alpha=0.3) +
   geom_line()
 ```
 
-Some interesting stories in there.
-1. A drastic increase over this time period for some!
+While it is difficult to see which colorus are which (the legend is only marginally helpful), there are some interesting stories in there.
+1. A sizeable increase over this time period for most countries!
 2. Canada consistently showing the highest value
 3. The United States drops below some other countries later in this time period
 
 #### 3.1.2 GDP per capita in the Americas
 
 ```{r fig.width=12, fig.height=8}
-gapminder %>% # altered figure width so we could see the lines better
+gapminder %>% 
   filter(continent == "Americas") %>%
   ggplot(aes(year, gdpPercap, group=country, colour=country)) +
   geom_point(alpha=0.3) +
   geom_line()
 ```
 
-Let's drop off Canada and the US to get a closer look at Central & South America (+ Mexico)
+This spaghetti plot is similar to the last - it's difficult to tease out which country is which from the legend, but I can clearly see some outliers in this plot (Canada & US). Let's drop off Canada and the US to get a closer look at Central & South America (+ Mexico)
 
 ```{r fig.width=12, fig.height=8}
 gapminder %>% # altered figure width so we could see the lines better
@@ -133,6 +151,8 @@ gapminder %>% # altered figure width so we could see the lines better
   geom_point(alpha=0.3) +
   geom_line() 
 ```
+
+Another option would be to use colours to highlight a few countries of interest (e.g. making all lines black but Venezuela). I'm not sure exactly how to do this at this point and am out of time, but am flagging this as an idea for future exploration. 
 
 #### 3.2 Comparing changes in GDP per capita in 5 countries
 
@@ -153,9 +173,11 @@ gapminder %>%
   ggplot(aes(gdpPercap, lifeExp, group=country, colour=country)) +
   facet_wrap(~ country) +
   geom_point(alpha=0.2) +
-  geom_line()
+  geom_path() #using geom_point instead of geom_line here -- connects in order that they appear
 ```
-This was an imperfect attempt to display trends in GDP per capita and life expectancy (2 continuous variables) in these 5 countries using faceting. It shows something, but maybe isn't a fully successful attempt. Part of the issue here is the common x scale. Let's try reversing the x and y variables...
+This was an imperfect attempt to display trends in GDP per capita and life expectancy (2 continuous variables) in these 5 countries using faceting. It shows something, but maybe isn't a fully successful attempt. Let's try reversing the x and y variables...
+
+Add arrange by year
 
 ```{r fig.width=12, fig.height=8}
 gapminder %>% 
@@ -163,7 +185,7 @@ gapminder %>%
   ggplot(aes(lifeExp, gdpPercap, group=country, colour=country)) +
   facet_wrap(~ country) +
   geom_point(alpha=0.2) +
-  geom_line()
+  geom_path()
 ```
 
 Still kind of a convoulted way to look at these variables...
@@ -174,8 +196,8 @@ All in one plot:
 gapminder %>% 
   filter(country %in% c("Venezuela", "Haiti", "Puerto Rico", "Trinidad and Tobago", "Nicaragua")) %>% 
   ggplot(aes(lifeExp, gdpPercap, colour=country)) +
-    geom_point() +
-    geom_smooth()
+  geom_point() +
+  geom_smooth(aes(fill=country)) 
 ```
 
 #### 3.3 Contrasting Nicaragua and Puerto Rico
@@ -195,7 +217,7 @@ And comparing changes in GDP per capita over time for both countries...
 ```{r}
 gapminder %>% 
   filter(country %in% c("Puerto Rico","Nicaragua")) %>% 
-ggplot(aes(year, gdpPercap, color = country)) + 
+  ggplot(aes(year, gdpPercap, color = country)) + 
   geom_point() +
   geom_smooth()
 ```
@@ -205,7 +227,7 @@ Let's see how they compare when we factor in changes in population...
 ```{r}
 gapminder %>% 
   filter(country %in% c("Puerto Rico","Nicaragua")) %>% 
-ggplot(aes(pop, gdpPercap, color = country)) + 
+  ggplot(aes(pop, gdpPercap, color = country)) + 
   geom_point() +
   geom_smooth()
 ```
