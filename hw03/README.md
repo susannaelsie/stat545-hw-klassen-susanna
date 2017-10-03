@@ -34,5 +34,9 @@ I chose to attack the following 3 tasks from the menu (with a table and a figure
 * My first task to look at the spread of GDP per capita by continent brought me back to <a href="http://stat545.com/block010_dplyr-end-single-table.html#group_by-is-a-mighty-weapon">this course resource on dplyr functions</a> to help me use ```group_by``` to look at that specific variable by continent
   * The **General summarization** section was particularly relevant
   
+* I generally found it quite straightforward to think through which figures made sense to plot to visually explore the data. The ggplot2 cheatsheet (found <a href="https://yihui.name/knitr/options/">here</a>) did help a lot
+
+* On the other hand, I found making useful (i.e. human-friendly) tables -- where it is possible to interpret the subset of data called up -- a bit difficult to think through with such a large dataset. I tried to capture these struggles in commentary throughout the assignment.
+
 * I encountered some errors when I tried to edit the figure size for the output in knitr. I found some solutions <a href="https://yihui.name/knitr/options/">here</a>
 
