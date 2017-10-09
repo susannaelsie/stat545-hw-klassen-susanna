@@ -19,3 +19,4 @@ Total Farm Capital | Table 004-0232 Census of Agriculture, farms classified by t
 2. Renamed first column name to 'CD Region'
 3. Renamed region names to shorten (removed province and CD code)
 4. Removed footnotes
+5. Replaced all x values with NA
