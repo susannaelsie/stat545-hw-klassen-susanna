@@ -13,3 +13,9 @@ Gross Farm Receipts | Table 004-0233 Census of Agriculture, number of farms clas
 Paid Non-Farm Work | Table 004-0242 Census of Agriculture, number of farm operators by paid non-farm work
 Farm Operator Work On-Farm | Table 004-0241 Census of Agriculture, number of farm operators by average number of hours per week worked 
 Total Farm Capital | Table 004-0232 Census of Agriculture, farms classified by total farm capital
+
+**Preparing data for import**: I went through the following steps to prepare the spreadsheets for being imported
+1. Removed extranneous details in the first row of the spreadsheet (and captured details in the above table)
+2. Renamed first column name to 'CD Region'
+3. Renamed region names to shorten (removed province and CD code)
+4. Removed footnotes
