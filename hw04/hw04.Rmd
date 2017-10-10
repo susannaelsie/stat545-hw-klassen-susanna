@@ -11,7 +11,7 @@ library(knitr)
 ```
 
 
-## Introducing my tasks for this assignment
+## Introducing my tasks for hw04
 
 I have imported several data tables into my local environment, but want to create a new dataset to work with that will contain information from both. Specifically, I am interested in the various levels of off-farm paid work and on-farm capital in various Census Divisions (CD) in British Columbia (BC), particularly those with a high number of blueberry farms.
 
@@ -59,7 +59,7 @@ bf %>%
 
 It is interesting to see from this plot that the four Census Divisions with highest number of blueberry farms have shown different trends from 2011 and 2016 -- with the Fraser Valley and the Comox Valley showing an increase, and the Capital and Greater Vancouver regions showing a decrease. 
 
-### Preparing additional dataframes
+### 1.3 Preparing additional dataframes
 
 I'd also like to take a look at the extent of paid off-farm work in various different CDs. The dataframe for 'PaidNonFarmWork' also has columns for year, so I will again use ```gather``` so that these two dataframes are in the same format.
 
@@ -74,27 +74,22 @@ ofw <- PaidNonFarmWork %>%
 
 Now we have a row for each year of data, and I've defined this new dataframe 'ofw'. 
 
-Now, I'd like to define a single measure for each region to indicate the extent of off-farm work. I think that the proportion of farm operators that work 20+ hours a week off of the farm should be a good measure, so I have some additional re-shaping to do...
+I'd like to define a single measure for each region to indicate the extent of off-farm work. I think that the proportion of farm operators that work 20+ hours a week off of the farm should be a good measure, so I have some additional re-shaping to do...
 
-First, I am going to ```spread``` the data so that I can have the number of operators in each 'bin' as variables instead of observations (this is temporary). Now I want to create a new variable for the proportion of farm operators in each region that wor 20+ hours off the farm (PropOp_20)
+First, I am going to ```spread``` the data so that I can have the number of operators in each 'bin' as variables instead of observations, as I think it will be easier to work with once in that format. 
 
-I also want to rename the columns, and will use the plyr package to do this
+I also want to create a new variable for the proportion of farm operators in each region that work 20+ hours off the farm (PropOp_20).
+
+-- how to sum [some] column values in a new variable???
+
 
 ```{r}
 ofw_wide <- ofw %>%
   spread(Avg_Hrs_OffFarmWork, number_operators) %>%
-  summarize()
-
+  mutate(PropOp_20 = sum("20 - 29 hours" + "30 - 40 hours" + "more than 40 hours"))
 ```
 
-Now, 
 
-```{r}
-ofw %>%
-  group_by(CD_Region) %>%
-  mutate(PropOp_20 = sum())
-
-```
 
 
 
@@ -112,24 +107,45 @@ fc <- TotalFarmCapital %>%
 Now we have a row for each year of data, and I've defined this new dataframe 'fc'. However, I'd like to define a single measure for each region to indicate the level of farm capital in the region. I think that the proportion of farms in each region with 
 
 
+## 2. Joining two dataframes
+
+Now that I have re-shaped two dataframes, I will join them! Because I should have the same observations by region and year, I simply want to combine the columns/variables. As such, I will use the ```full_join``` function.
+
+```{r}
+Blue_off_farm <- left_join(ofw_wide, bf, by = "CD_Region", "year")
+knitr::kable(Blue_off_farm)
+```
+
+Why am I getting duplicated values for each year? All 3 join functions come back with the same resut...
+
+
+In order to test out a new join function, I'm going to try adding data about Total Farm Capital to this new Blueberry Farms and Off-farm Work dataframe. 
+
+This dataframe is currently in the same format that the others were, with columns for years and different measures as row numbers. I am going to make a new dataframe with only values for 2016, and try combining these two to see what I get.
+
+First, I'm going to drop the 2011 data from the Total Farm Capital dataframe
+
+```{r}
+TotFarmCap16 <- TotalFarmCapital %>%
+  select(2016) %>%
+knitr::kable(TotFarmCap16)
+```
+
+Would perform a
 
 
 ```{r}
-knitr::kable(TotalFarmCapital)
-```
-
-```{r}
-fc <- TotalFarmCapital %>%
-  summarize()
+Blue_off_farm %>%
+  select(CD_Region, year, "No off-farm work", blueberry_farms)
 ```
 
 
-Could look at the four categories (1, 2, 3 and 4 of size of farm capital) in the fraser valley (filter for this region only) using faceting to display the 2 years? 
 
 
-```{r}
-TotalFarmCapital %>%
-  filter(CD_Region %in% c("Fraser Valley", "Greater Vancouver", "" ) )
-  summarize()
-```
 
+
+This was pretty simple, so I'll also take a look at activity #3
+
+## 3. Exploring ```Match``` and ```Merge```
+
+match returns a vector of the positions of (first) matches of its first argument in its second.
