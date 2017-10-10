@@ -63,8 +63,8 @@ While in the hw04 description activity 2 (re-shaping) involves plotting life exp
 
 ```{r}
 bf %>% 
-  arrange(blueberry_farms) # Need to integrate argument for descending order?
-  knitr::kable(bf) # And figure out why when I add this the arrange function no longer works...
+  arrange(desc(blueberry_farms)) %>% # add desc argument to display highest values first
+  knitr::kable()
 ```
 
 
@@ -72,100 +72,131 @@ bf %>%
 bf %>%
   filter(CD_Region %in% c("Fraser Valley", "Greater Vancouver", "Capital", "Comox Valley")) %>%
   ggplot(aes(x = CD_Region, y = blueberry_farms)) +
-  geom_col(aes(color=year), position = "dodge")
+  geom_col(aes(color=year), position = "dodge") +
+  labs(x="Census Division", y="Number of Farms", title="Number of Blueberry Farms in Four Census Divisions in B.C.") +
+  theme_bw(base_size=12) +
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
 ```
 
 It is interesting to see from this plot that the four Census Divisions with highest number of blueberry farms have shown different trends from 2011 and 2016 -- with the Fraser Valley and the Comox Valley showing an increase, and the Capital and Greater Vancouver regions showing a decrease. 
 
-### 1.3 Preparing additional dataframes
+## 2. Preparing additional dataframe for Paid Work Off-farm
 
 I'd also like to take a look at the extent of paid off-farm work in various different CDs. The dataframe for 'PaidNonFarmWork' also has columns for year, so I will again use ```gather``` so that these two dataframes are in the same format.
-
 
 ```{r}
 ofw <- PaidNonFarmWork %>%
   gather(key = "year", value = "number_operators", "2011":"2016") %>%
   arrange(CD_Region) %>%
   select(CD_Region, Avg_Hrs_OffFarmWork, year, number_operators) 
-  knitr::kable(ofw)
 ```
 
 Now we have a row for each year of data, and I've defined this new dataframe 'ofw'. 
 
 I'd like to define a single measure for each region to indicate the extent of off-farm work. I think that the proportion of farm operators that work 20+ hours a week off of the farm should be a good measure, so I have some additional re-shaping to do...
 
+### 2.1 Using ```spread```
+
 First, I am going to ```spread``` the data so that I can have the number of operators in each 'bin' as variables instead of observations, as I think it will be easier to work with once in that format. 
-
-I also want to create a new variable for the proportion of farm operators in each region that work 20+ hours off the farm (PropOp_20).
-
--- how to sum [some] column values in a new variable??? Try dcast( identifier, place where vales are stored, fun.aggregate = sum) #fun aggregate takes more than oen value and spits out a single value
-
-Use group_by and summarize after re-shaping?
-
 
 ```{r}
 ofw_wide <- ofw %>%
-  spread(Avg_Hrs_OffFarmWork, number_operators) ##add a mutate in here to sum 3 columns across the observation?
+  spread(Avg_Hrs_OffFarmWork, number_operators) %>% View 
 ```
 
+Success! Only after re-considering my approach, I will not use the wide format. So for now I will shelve `ofw_wide`, but will leave this in here as a record for how I did it.
 
 
+### 2.2 Using ```mutate``` and ```cumsum``` to define a new variable
 
+I want to create a new variable for the proportion of farm operators in each region that work 20+ hours off of the farm (and I have data for two years - 2011 and 2016).
 
-
-I'd also like to take a look at values of on-farm capital in various different CDs. The dataframe for 'Total On-farm Capital' also has columns for year, so I will once again use ```gather``` so that these two dataframes are in the same format.
+First I will make a new column and call it hours, but I'll just keep it empty. Then I will filter for the values I want to use to make my new measure (number of operators in each of the categories for 20 hours and more [3 categories total]).  
+going to make a new coumn and number it so that it is ordered
 
 ```{r}
-fc <- TotalFarmCapital %>%
-  gather(key = "year", value = "number_farms", "2011":"2016") %>%
-  arrange(CD_Region) %>%
-  select(CD_Region, Farms_TotFarmCap, year, number_farms) 
-  knitr::kable(fc)
+ofw_20_40 <- ofw %>% 
+  mutate(hours = NA) %>% #creating empty column
+  filter(!Avg_Hrs_OffFarmWork %in% c("Total Operators", "No off-farm work", "less than 20 hours")) %>% 
+  mutate(year = as.factor(year)) %>% #filtering out the values that I don't want (I only want the bins for 20 hours +)
+  mutate(CD_Region = as.factor(CD_Region)) %>%  # changing CD_Region variable to a factor to make sure group_by works on it
+  mutate(hours = ifelse(Avg_Hrs_OffFarmWork == "No off-farm work", 0, hours)) %>% # assigning new values for the bins
+  mutate(hours = ifelse(Avg_Hrs_OffFarmWork == "less than 20 hours", 20, hours)) %>% 
+  mutate(hours = ifelse(Avg_Hrs_OffFarmWork == "20 - 29 hours", 29, hours)) %>% 
+  mutate(hours = ifelse(Avg_Hrs_OffFarmWork == "30 - 40 hours", 40, hours)) %>% 
+  mutate(hours = ifelse(Avg_Hrs_OffFarmWork == "more than 40 hours", 41, hours)) %>% 
+  group_by(CD_Region, year) %>%
+  arrange(hours) %>%
+  group_by(CD_Region, year) %>%
+  mutate(cum_operators = cumsum(number_operators)) %>% #creating another new variable to contain the cumulative sum of the number operators in each region by year (for the 3 categories filtered above)
+  arrange(CD_Region, year) #to arrange the ordering of the final table
 ```
 
-Now we have a row for each year of data, and I've defined this new dataframe 'fc'. However, I'd like to define a single measure for each region to indicate the level of farm capital in the region. I think that the proportion of farms in each region with 
+In this new dataframe (ofw_20_40), I can see that the new[est] variable (cum_operators) contains the cumulative sum of operators for the 'bins' of 20-29 hours, 30-40 hours, and 40+ hours of off-farm work per week! I only need the third value (the total of the three), so I will filter that out...and call this dataset ofw_40
+
+```{r}
+ofw_40 <- ofw_20_40 %>% 
+  filter(Avg_Hrs_OffFarmWork == "more than 40 hours")
+```
 
 
-Make plots using faceting - geom_column and faceting for each region (x = categories of off-farm work and/or total farm capital). do not use scale because i want to compare regions (same units)
+### 2.3 Joining two dataframes
 
-## 2. Joining two dataframes
+Now to get the ratio for each region by year, I can use the total number of operators (not found in ofw_20_40 but still in the ofw dataframe I created above). Since this is already a row in the dataset, I will create a new dataframe that contains it, and join it with the one I jsut created with the sum of operators who work more than 20 hours off-farm per week. 
+
+```{r}
+ofw_tot <- ofw %>% 
+  filter(Avg_Hrs_OffFarmWork == "Total Operators") %>% 
+  select(CD_Region, year, Avg_Hrs_OffFarmWork, number_operators)
+```
+
+And to join them, I should have two dataframes with the same number and types of rows (2 rows for each region, for 2011 and 2016 respectively), so I can use any join function, but will use ```left_join```:
+
+```{r}
+left_join(ofw_40, ofw_tot, by = c("CD_Region", "year"))
+```
+
+This looks great! I have some extra/poorly named columns, so I will re-name these to reflect the actual values contained in them:
+
+```{r}
+left_join(ofw_40, ofw_tot, by = c("CD_Region", "year")) %>% 
+  rename(total_operators = number_operators.y, operators_20plus = cum_operators) %>% 
+  select(CD_Region, year, total_operators, operators_20plus )
+```
+
+One step closer! Now I can use the ```mutate``` function to create a new variable with the proportion using the values in operators_20plus and total_operators:
+
+```{r}
+ofw_prop <- left_join(ofw_40, ofw_tot, by = c("CD_Region", "year")) %>% 
+  rename(total_operators = number_operators.y, operators_20plus = cum_operators) %>% 
+  select(CD_Region, year, total_operators, operators_20plus ) %>% 
+  mutate(prop_20plus = operators_20plus/total_operators)
+```
+
+
+
+## 3. Joining two *more* dataframes
 
 Now that I have re-shaped two dataframes, I will join them! Because I should have the same observations by region and year, I simply want to combine the columns/variables. As such, I will use the ```full_join``` function.
 
 ```{r}
-Blue_off_farm <- left_join(ofw_wide, bf, by = "CD_Region", "year")
-knitr::kable(Blue_off_farm)
+blue_off_farm <- full_join(ofw_prop, bf, by = c("CD_Region", "year")) 
+```
+### 3.1 Plotting them
+
+Now I'm going to use my newly cleaned, shaped and joined datasets to make a plot:
+
+```{r}
+blue_off_farm %>% 
+  ggplot(aes(prop_20plus, blueberry_farms, colour=CD_Region)) +
+  geom_point()
 ```
 
-Why am I getting duplicated values for each year? All 3 join functions come back with the same resut...
-
-
-In order to test out a new join function, I'm going to try adding data about Total Farm Capital to this new Blueberry Farms and Off-farm Work dataframe. 
-
-This dataframe is currently in the same format that the others were, with columns for years and different measures as row numbers. I am going to make a new dataframe with only values for 2016, and try combining these two to see what I get.
-
-First, I'm going to drop the 2011 data from the Total Farm Capital dataframe
-
-This is the code I tried to use but get an error:
-
-TotFarmCap16 <- TotalFarmCapital %>%
-  select(2016) %>%
-knitr::kable(TotFarmCap16)
---> problem with numeric column/variable name?
-
-
-
-Now I tried to set up piping to select for the one variable, "No off-farm work" (as a single measure that tells us about whether farm operators are able to sustain their business without off-farm income), but again I get an error message, presumably from the variable name having spaces. Can I fix with the rename function in dplyr? Or do I need to change it before importing the dataset (also easy..). This thread: https://stackoverflow.com/questions/21502465/replacement-for-rename-in-dplyr
-
-Blue_off_farm %>%
-  select(CD_Region, year, "No off-farm work", blueberry_farms)
 
 
 
 
-
-This was pretty simple, so I'll also take a look at activity #3
-
-## 3. Exploring ```Match``` and ```Merge```
-
-match returns a vector of the positions of (first) matches of its first argument in its second.
