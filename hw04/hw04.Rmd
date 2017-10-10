@@ -1,6 +1,9 @@
 ---
 title: "hw04"
-output: html_document
+output: 
+    html_document:
+      keep_md: yes
+      toc: yes
 ---
 
 First I'll need to load the tidyverse and knitr packages:
