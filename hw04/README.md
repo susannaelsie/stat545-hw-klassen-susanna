@@ -20,3 +20,11 @@ Total Farm Capital | Table 004-0232 Census of Agriculture, farms classified by t
 3. Renamed region names to shorten (removed province and CD code)
 4. Removed footnotes
 5. Replaced all x values with NA
+
+
+Working with the data in R
+
+I began looking into how to use commands in the console or code to load the datasets (from the tutorial above) but in the end I loaded them by clicking on the files window on the bottom right corner of my screen.
+
+I think I encountered the most trouble when I ended up with several variable/column names with spaces and numbers in them. This made it difficult for me as I could not tell if it was my code or my approach that was incorrect, or if I was simply asking R to perform a task that it cannot do because of my naming conventions. While I did think to rename my variable names when I was first preparing my data for import, I did not think ahead to the output after re-shaping (where some values became variable names, and vice versa). As such, I learned a *lot* in this assignment through trial and error. The depth of my exploration certainly suffered, but I think ultimately my learning did not.
+
