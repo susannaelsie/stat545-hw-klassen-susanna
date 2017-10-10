@@ -22,11 +22,26 @@ All of the data frames have values for each CD in BC, but they vary in their num
 
 ## 1. Re-shaping my data
 
-I am going to perform a variation on Activity #2, using Stats Canada Agricultural Census Data instead of the Gapminder data. 
+I am going to perform a variation on Activity #2, using Stats Canada Agricultural Census Data instead of the Gapminder data. Note that I first need to save my newly imported dataset as an Rdata file (using ```save(Blueberry_Farms, file="Blueberry_Farms.RData")```), and then load it using the following chunk:
+
+```{r}
+load(file = "Blueberry_Farms.RData")
+```
+
+
+I need to do the same with the (1) Off-farm Work and (2) Total Farm Capital dataframes that I will use later on:
+
+```{r}
+load(file = "PaidNonFarmWork.RData")
+load(file = "TotalFarmCapital.RData")
+```
+
+
 
 ### 1.1 Using ```gather``` to make a longer dataframe
 
 Currently, one of my dataframes has 2 variables (columns) for each year, and I'd like to re-shape it so that it has a single row per year (and one variable for number of "farms reporting blueberries").
+
 
 ```{r}
 knitr::kable(Blueberry_Farms)
@@ -83,13 +98,14 @@ First, I am going to ```spread``` the data so that I can have the number of oper
 
 I also want to create a new variable for the proportion of farm operators in each region that work 20+ hours off the farm (PropOp_20).
 
--- how to sum [some] column values in a new variable???
+-- how to sum [some] column values in a new variable??? Try dcast( identifier, place where vales are stored, fun.aggregate = sum) #fun aggregate takes more than oen value and spits out a single value
+
+Use group_by and summarize after re-shaping?
 
 
 ```{r}
 ofw_wide <- ofw %>%
-  spread(Avg_Hrs_OffFarmWork, number_operators) %>%
-  mutate(PropOp_20 = sum("20 - 29 hours" + "30 - 40 hours" + "more than 40 hours"))
+  spread(Avg_Hrs_OffFarmWork, number_operators) ##add a mutate in here to sum 3 columns across the observation?
 ```
 
 
@@ -110,6 +126,8 @@ fc <- TotalFarmCapital %>%
 Now we have a row for each year of data, and I've defined this new dataframe 'fc'. However, I'd like to define a single measure for each region to indicate the level of farm capital in the region. I think that the proportion of farms in each region with 
 
 
+Make plots using faceting - geom_column and faceting for each region (x = categories of off-farm work and/or total farm capital). do not use scale because i want to compare regions (same units)
+
 ## 2. Joining two dataframes
 
 Now that I have re-shaped two dataframes, I will join them! Because I should have the same observations by region and year, I simply want to combine the columns/variables. As such, I will use the ```full_join``` function.
@@ -128,20 +146,19 @@ This dataframe is currently in the same format that the others were, with column
 
 First, I'm going to drop the 2011 data from the Total Farm Capital dataframe
 
-```{r}
+This is the code I tried to use but get an error:
+
 TotFarmCap16 <- TotalFarmCapital %>%
   select(2016) %>%
 knitr::kable(TotFarmCap16)
-```
-
-Would perform a
+--> problem with numeric column/variable name?
 
 
-```{r}
+
+Now I tried to set up piping to select for the one variable, "No off-farm work" (as a single measure that tells us about whether farm operators are able to sustain their business without off-farm income), but again I get an error message, presumably from the variable name having spaces. Can I fix with the rename function in dplyr? Or do I need to change it before importing the dataset (also easy..). This thread: https://stackoverflow.com/questions/21502465/replacement-for-rename-in-dplyr
+
 Blue_off_farm %>%
   select(CD_Region, year, "No off-farm work", blueberry_farms)
-```
-
 
 
 
