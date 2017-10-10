@@ -1,6 +1,6 @@
 # About Homework 4
 
-For this assignment, I decided to leave my comfort zone and try working with some Canadian Agricultural Census data (relevant to my research). Because we are now working with data reshaping and aggregation, and have learned some pretty powerful `dplyr` functions to work with large datasets, I decided this was a good opportunity to do this.
+For this assignment, I decided to leave my comfort zone and try working with some Canadian Agricultural Census data (relevant to my research about the blueberry industry in BC). Because we are now working with data reshaping and aggregation, and have learned some pretty powerful `dplyr` functions to work with large datasets, I decided this was a good opportunity to do this.
 
 ## My Process
 
@@ -21,6 +21,8 @@ Total Farm Capital | Table 004-0232 Census of Agriculture, farms classified by t
 4. Removed footnotes
 5. Replaced all x values with NA
 
+## Lessons Learned
+- One needs to save their newly imported datasets as '.Rdata' files in R as knitr does not recognize them when you go to knit the html file. I am glad I tested whether the 'knit' function was working earlier on in the process and had time to troubleshoot this! I found a solution on <a href="https://support.rstudio.com/hc/en-us/community/posts/200631198-data-set-not-found-when-knitting-HTML">this RStudio Support thread</a> that gave me just the trick (save the file in your console, and write an R code chunk to load the file). 
 
 Working with the data in R
 
