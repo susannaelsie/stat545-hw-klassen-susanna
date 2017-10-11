@@ -11,6 +11,7 @@ First I'll need to load the tidyverse and knitr packages:
 ```{r}
 library(tidyverse)
 library(knitr)
+options(knitr.table.format = 'markdown')
 ```
 
 
@@ -53,8 +54,8 @@ To re-shape this, I'll use the ```gather``` function. I'll also name this new ta
 bf <- Blueberry_Farms %>%
   gather(key = "year", value = "blueberry_farms", "2011":"2016") %>%
   arrange(CD_Region) %>%
-  select(CD_Region, year, blueberry_farms) 
-  knitr::kable(bf)
+  select(CD_Region, year, blueberry_farms) %>%
+  print(bf)
 ```
 
 ### 1.2 Make a plot comparing number of blueberry farms by region
@@ -177,7 +178,52 @@ ofw_prop <- left_join(ofw_40, ofw_tot, by = c("CD_Region", "year")) %>%
   mutate(prop_20plus = operators_20plus/total_operators)
 ```
 
+### 2.4 Plotting off-farm work
 
+Let's see what the plot of this new variable looks like. First I want to arrange the data to see the highest values:
+
+```{r}
+ofw_prop %>% 
+  arrange(desc(prop_20plus)) %>% # add desc argument to display highest values first
+  knitr::kable()
+```
+
+
+I'm going to take a look at the regions with the highest number of blueberry farms (because they are of particular interest for my research):
+
+```{r}
+ofw_prop %>%
+  filter(CD_Region %in% c("Fraser Valley", "Greater Vancouver", "Capital", "Comox Valley")) %>%
+  ggplot(aes(x = CD_Region, y = prop_20plus)) +
+  geom_col(aes(color=year), position = "dodge") +
+  labs(x="Census Division", y="Proportion of Operators Working 20+ hours Off-farm", title="Extent of Off-farm Work in Four Census Divisions in B.C.") +
+  theme_bw(base_size=12) +
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
+```
+
+All four are quite similar!
+
+
+Curious to see if there are differences between 2011 and 2016 for proportion of operators who work more than 20 hours off-farm at a provincial scale...
+
+```{r}
+ofw_prop %>%
+  ggplot(aes(x = prop_20plus, colour = year)) +
+  geom_density() +
+  labs(x="Proportion of Farm Operators Working 20+ hours Off-farm", title="Extent of Off-farm Work in B.C.") +
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
+```
+
+
+Interesting -- looks like more regions showing around half of farm operators reporting 20+ hours of work off-farm, whereas in 2011 there was 
 
 ## 3. Joining two *more* dataframes
 
@@ -190,13 +236,15 @@ blue_off_farm <- full_join(ofw_prop, bf, by = c("CD_Region", "year"))
 
 Now I'm going to use my newly cleaned, shaped and joined datasets to make a plot:
 
-```{r}
+```{r fig.width=10}
 blue_off_farm %>% 
-  ggplot(aes(prop_20plus, blueberry_farms, colour=CD_Region)) +
-  geom_point()
+  ggplot(aes(blueberry_farms, prop_20plus, colour=CD_Region, size=blueberry_farms)) +
+  geom_point() # I added the size argument to add some emphasis, but it's double counting in a sense (already the x value...)
 ```
 
+Well, this plot isn't the *most* informative, but it does clearly display that the regions with the most blueberry farms show patterns in off-farm work that are relatively similar to the central tendency across B.C. (which is contrary to what I expected based on socio-economic patterns in blueberry-producing regions)
 
 
+It would have been useful to keep the larger CAR region divisions so that I could group geographically. Something for next time!
 
 

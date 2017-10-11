@@ -16,13 +16,14 @@ Total Farm Capital | Table 004-0232 Census of Agriculture, farms classified by t
 
 **Preparing data for import**: I went through the following steps to prepare the spreadsheets for being imported (with help from <a href="https://www.datacamp.com/community/tutorials/r-data-import-tutorial">this online tutorial</a>)
 1. Removed extranneous details in the first row of the spreadsheet (and captured details in the above table)
-2. Renamed first column name to 'CD Region'
+2. Renamed variable/column headers to short things with fewer numbers and spaces
 3. Renamed region names to shorten (removed province and CD code)
 4. Removed footnotes
 5. Replaced all x values with NA
 
 ## Lessons Learned
 - One needs to save their newly imported datasets as '.Rdata' files in R as knitr does not recognize them when you go to knit the html file. I am glad I tested whether the 'knit' function was working earlier on in the process and had time to troubleshoot this! I found a solution on <a href="https://support.rstudio.com/hc/en-us/community/posts/200631198-data-set-not-found-when-knitting-HTML">this RStudio Support thread</a> that gave me just the trick (save the file in your console, and write an R code chunk to load the file). 
+- I encountered some issues printing my tables with the proper format in the markdown file. I found ,a href="https://github.com/STAT545-UBC/Discussion/issues/136">this helpful thread</a> upon googling the problem -- it's not only from this class, but from one of my best friends who took the class last year! Great minds think alike...?
 
 Working with the data in R
 
