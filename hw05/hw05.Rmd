@@ -1,0 +1,61 @@
+---
+title: "hw05"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+## 0. Pre-amble
+
+First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code.
+
+```{r}
+library(gapminder)
+library(tidyverse)
+library(knitr)
+options(knitr.table.format = 'markdown')
+library(forcats)
+library(readxl) #package already downloaded (bundled in the tidyverse package!) for reading excel files
+```
+
+I'm going to use the gapminder dataset to go through the exercises for hw05. First I'll refresh my memory of what I'm working with here...
+
+```{r}
+gapminder
+```
+
+
+As I know this assignment works with factors, I've noted which variables are factors.
+
+
+## 1. Factor Management
+
+I want to drop observations for Oceania, and then drop the unused factor levels (left by Oceania's absense). First let me take a look at the number of factor levels (and associated number of observations for each) there are for the variable ```Continent```:
+
+### 1.1 Dropping Oceania from Gapminder
+
+```{r}
+nlevels(gapminder$continent) # total # levels for continent (factor)
+fct_count(gapminder$continent) # number of obs per factor using forcats package
+```
+
+
+```{r}
+gap_5 <- gapminder %>% 
+  filter(!continent == "Oceania")
+```
+
+Now I'll use the forcats package to drop unused levels
+
+```{r}
+gap_5_dropped <- gap_5 %>% 
+  droplevels()
+nlevels(gap_5_dropped$continent)
+```
+ 
+ Checking to see if this worked...
+
+```{r}
+nlevels(gap_5_dropped$continent) # total # levels for continent (factor)
+fct_count(gap_5_dropped$continent) # number of obs per factor using forcats package
+```
