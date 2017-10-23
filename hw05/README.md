@@ -9,7 +9,7 @@ Data Frame | Description | Variable of Interest
 1991_exp_rec | Operating expenses and total gross farm receipts | TOTEXP = Total farm business operating expenses ($), SALES95 = total gross farm receipts, NTOTEXP = number of farms reporting
 1996_exp | Farm business operating expenses and paid agricultural labour | TOTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting, SALES95 = total gross farm receipts
 1996_rec | Gross farm receipts | VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($)
-2001_exp_rec | Operating expenses and total gross farm receipts | OTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting, VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($) 
+2001_exp_rec | Operating expenses and total gross farm receipts | totexp = Total farm business operating expenses($), ntotexp = number of farms reporting, salesxfp = Total gross farm receipts (excluding forest products sold)($) 
 2006_exp | Farm business operating expenses and paid agricultural labour | TOTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting
 2006_rec | Gross farm receipts | VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($)
 2011_exp_rec | Capital, expenses and gross farm receipts | VAL_SALESXFP = Total value of gross farm receipts, TOTEXP = Total farm business operating expenses, NTOTEXP = Number of farms reporting
