@@ -68,42 +68,85 @@ Success!
 
 ### 1.2 Using factors in BC Agriculture data
 
-I'll first bring in and take a look at these 2 additional dataset (stored as an excel file in my working directory)
+Initially I was only going to bring in and take a look at these first two datasets on expensese and receipts(sales) on farms in the year 2006 (stored as an excel file in my working directory). However, once I got further along in the assignment I decided to bring in additional data for other years so that I have more to work with. Unfortnately, this data is not available in one excel file, but must be downloaded as individual files for each year (and sometimes for each variable). The readme.md file for this assignment has more description of each of these datasets. 
 
 ```{r}
-exp06 <- read_excel("2006_Expenses.xls")
-rec06 <- read_excel("2006_Receipts.xls")
-fru06 <- read_excel("2006_Fruits.xls")
+exp_rec_86 <- read_excel("1986_exp_rec.xls")
+exp_rec_91 <- read_excel("1991_exp_rec.xls")
+exp96 <- read_excel("1996_exp.xls")
+rec96 <- read_excel("1996_rec.xls")
+exp_rec_2001 <- read_excel("2001_exp_rec.xls")
+exp06 <- read_excel("2006_exp.xls")
+rec06 <- read_excel("2006_rec.xls")
+exp_rec_2011 <- read_excel("2011_exp_rec.xls")
 ```
 
-These are somewhat large files (2087 observations each and between 17 and 52 variables. So I'd like to zoom in on the measures and regions I am most interested in (see <a href="">my README.md file</a> for more details.
+These are somewhat large files (~2100 observations each and between 16 and 106 variables. So I'd like to zoom in on the measures and regions I am most interested in (see <a href="">my README.md file</a> for more details.
 
 #### 1.2.1 Prepping the data
 
 I'll use a combination of select and filter to create new dataframes with the information I care to look at (variables in the readme file and the Census Agricultural Regions (CARs) in BC), and then I'll do some work with factors. 
 
 ```{r}
-rec06_BC <- rec06 %>% # Dataframe for gross farm receipts
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %>% #leaving enough information for future analyses
+exp_rec_86_BC <- exp_rec_86 %>% # note different column names for many of the datasets (though same variables)
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %>% #leaving enough information for future analyses
+  filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) # note that region names and numbers changed in 2001, so using AREAIDs here
+
+exp_rec_91_BC <- exp_rec_91 %>% # 
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %>% 
+  filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
+
+rec96_BC <- rec96 %>% 
+  select(AREAID, PROV, CAR, CD, AREANAME, SALES95) %>% 
+  filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
+
+exp96_BC <- exp96 %>% 
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, NTOTEXP) %>% 
+  filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
+
+exp_rec_2001_BC <- exp_rec_2001 %>% 
+  select(PROV, CAR2, CD, `GEO NAMES`, totexp, ntotexp, salesxfp) %>% 
+  filter(CD == 0, `GEO NAMES` %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
+
+rec06_BC <- rec06 %>% 
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %>% 
   filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
 
-exp06_BC <- exp06 %>%  #Dataframe for total farm expenses
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, TOTEXP) %>% 
+exp06_BC <- exp06 %>%  
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, NTOTEXP, TOTEXP) %>% 
   filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
 
-fru06_BC <- fru06 %>% 
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, BLUEBTA) %>% 
-  filter(AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
+exp_rec_2011_BC <- exp_rec_2011 %>% 
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP, NTOTEXP, TOTEXP) %>% 
+  filter(HDPROV == 59, AGOPCAR %in% c("01", "02", "03", "04", "05", "06", "07", "08"), CENSUSD == "00") # once again need to use different filter because areas are named differently
 ```
 
-Great! Much more manageable. Now I'll look at the dataframes to see how the AGOCAR numbers (a categorical variable) and AREANAME are stored.
+Great! Much more manageable. Now I'll remove the larger dataframes, which I won't be needing anymore. 
 
 ```{r}
-str(exp06_BC$AREANAME)
-str(rec06_BC$AGOPCAR)
+rm(exp_rec_2001, exp_rec_2011, exp_rec_86, exp_rec_91, exp06, rec06, exp96, rec96)
 ```
 
-AREANAME is a character, as would be expected, and AGOPCAR is stored as numerical. I'd like to store the AGOPCAR as a factor (since it corresponds to the categorical variable of AREANAME). 
+
+Now I will take look at the new [smaller] dataframes to see how the region names or region identifier are stored /what types of objects they are. I'll just check a subset of the dataframes to see what I am working with. 
+
+```{r}
+str(exp_rec_86_BC)
+str(exp_rec_91_BC)
+str(exp06_BC)
+```
+
+Oh boy - all sorts of fun going on there. 
+
+- For the **1986** data, AREAID is a character, AREANAME is a character, TOTEXP is also a character (will have to change), whereas the other 2 measures/variables are numeric.
+- For the **1991** data, same thing.
+- For the **2006** data, AREANAME is a character, AGOPCAR is numeric, and TOTEXP is also a character (will have to change). 
+
+So I know that I will have some conversions to do. I'll get those out of the way now.
+
+#### 1.2.2 Changing ```things```
+
+I'm going to start with a pilot test for converting one variable to a factor. 
 
 ```{r}
 rec06_BC$AGOPCAR <- as_factor(as.character(rec06_BC$AGOPCAR)) 
@@ -117,24 +160,120 @@ levels(rec06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest"
 
 Success (and I can see that the names are accurate because I still have the AREANAME column). 
 
-Now I'd like to do the same with the expenses data...
+Now I'd like to do the same with the other dataframes, and ensure they have a common factor name and level  for Census Agricultural Region (as well as a unique identifier) so that I can join them later. I will go through the following process for each dataframe before merging them:
+1. Create/change variable to include unique number for each CAR region (and ensure these are consistent with numbering used post 2001, not prior to)
+2. Convert variable types as needed 
+3. Drop unused variables
+4. Add a column for year
+
+1986 data:
+
+```{r}
+exp_rec_86_BC$CAR <- as_factor(as.character(exp_rec_86_BC$CAR)) #Re-naming to simplify names
+  levels(exp_rec_86_BC$CAR)<-c("Kootenay", "Okanagan", "Thompson", "Mainland", "Island", "Cariboo", "Omineca", "Peace") 
+  
+ord_86 <-exp_rec_86_BC$CAR %>% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel("Island", "Mainland", "Okanagan", "Thompson", "Kootenay", "Cariboo", "Omineca", "Peace") %>% 
+  levels()
+
+exp_rec_86_BC$TOTEXP <- as.numeric(exp_rec_86_BC$TOTEXP) # change to numeric
+str(exp_rec_86_BC) # check
+
+exp_rec_86_BC %>% 
+  mutate(YEAR = 1986) %>% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP, SALES95) %>% # dropping unused variables
+  knitr::kable()
+
+levels(exp_rec_86_BC$CAR)
+```
+
+1991 data:
+
+```{r}
+exp_rec_91_BC$CAR <- as_factor(as.character(exp_rec_91_BC$CAR)) #Re-naming to simplify names
+  levels(exp_rec_91_BC$CAR)<-c("Kootenay", "Okanagan", "Thompson", "Mainland", "Island", "Cariboo", "Omineca", "Peace") 
+  
+exp_rec_91_BC$CAR %>% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel("Island", "Mainland", "Okanagan", "Thompson", "Kootenay", "Cariboo", "Omineca", "Peace") %>% 
+  levels()
+
+exp_rec_91_BC$SALES95 <- as.numeric(exp_rec_91_BC$SALES95) # change to numeric
+str(exp_rec_91_BC) #check
+
+exp_rec_91_BC %>% 
+  mutate(YEAR = 1991) %>% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP, SALES95) %>% # dropping unused variables
+  knitr::kable()
+```
+
+1996 Expenses data:
+
+```{r}
+exp96_BC$CAR <- as_factor(as.character(exp96_BC$CAR)) #Re-naming to simplify names
+  levels(exp96_BC$CAR)<-c("Kootenay", "Okanagan", "Thompson", "Mainland", "Island", "Cariboo", "Omineca", "Peace") 
+  
+exp96_BC$CAR %>% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel("Island", "Mainland", "Okanagan", "Thompson", "Kootenay", "Cariboo", "Omineca", "Peace") %>% 
+  levels()
+
+exp96_BC$TOTEXP <- as.numeric(exp96_BC$TOTEXP) # change to numeric
+str(exp96_BC) #check
+
+exp96_BC %>% 
+  mutate(YEAR = 1996) %>% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP) %>% # dropping unused variables
+  knitr::kable()
+```
+
+1996 Receipts Data:
+
+
+```{r}
+rec96_BC$CAR <- as_factor(as.character(rec96_BC$CAR)) #Re-naming to simplify names
+  levels(rec96_BC$CAR)<-c("Kootenay", "Okanagan", "Thompson", "Mainland", "Island", "Cariboo", "Omineca", "Peace") 
+  
+rec96_BC$CAR %>% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel("Island", "Mainland", "Okanagan", "Thompson", "Kootenay", "Cariboo", "Omineca", "Peace") %>% 
+  levels()
+
+rec96_BC$SALES95 <- as.numeric(rec96_BC$SALES95) # change to numeric
+str(rec96_BC) #check
+
+rec96_BC %>% 
+  mutate(YEAR = 1996) %>% # adding new column for year
+  select(AREAID, CAR, YEAR, SALES95) # dropping unused variables
+```
+
+
+2006 data:
 
 ```{r}
 exp06_BC$AGOPCAR <- as_factor(as.character(exp06_BC$AGOPCAR))
 levels(exp06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+
 ```
 
-And now I'll join these two dataframes and drop unnecessary variables..,
+
+
+```{r}
+
+```
+
+
+
+
+
+And now I'll join these two dataframes and drop unnecessary variables..
 
 ```{r}
 rec_exp_06_BC <- left_join(exp06_BC, rec06_BC) %>% 
   select(HDPROV, AGOPCAR, TOTEXP, VAL_SALESXFP)
 ```
 
-Great! Now this is ready for some analysis... 
+Now this is data has been 'wrangled' and is [nearly] ready for some plotting.
 
 
-#### 1.2.2 Re-ordering the factors in a principled way
+#### 1.2.3 Re-ordering the factors in a principled way
 
 Check default ordering..
 ```{r}

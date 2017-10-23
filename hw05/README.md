@@ -30,3 +30,4 @@ I'm also going to need to narrow down the geographic scope of for my analysis, s
 - <a href="https://rdrr.io/cran/forcats/man/as_factor.html">Additional resource</a> on ```as_factor``` function 
 - I had encountered some strange repeated observations after selecting and filtering to make my smaller BC datasets, which I realized were created 
 - Renaming factor levels: http://www.cookbook-r.com/Manipulating_data/Renaming_levels_of_a_factor/
+- Challenges working with these ag census datasets as I ended up with a dataframe with only one obesrvation per factor level, which was not really the point of the excercise
