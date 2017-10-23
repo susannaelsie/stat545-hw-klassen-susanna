@@ -5,9 +5,14 @@
 
 Data Frame | Description | Variable of Interest  
 ------------ | ------------- | ------------- 
-rec06 | Number of farms classified by Total gross farm receipts | VAL_SALESXFP = Total gross farm receipts (excluding forest products sold) - Amount $
-exp06 | Farm business operating expenses and paid agricultural labour | TOTEXP = Total farm business operating expenses - Amount $
-fru06 | Fruits, berries and nuts | BLUEBTA = Blueberries total area - Acres
+1986_exp_rec | Operating expenses and total gross farm receipts | TOTEXP = Total farm business operating expenses ($), SALES95 = total value of agricultural products sold, NTOTEXP = number of farms reporting
+1991_exp_rec | Operating expenses and total gross farm receipts | TOTEXP = Total farm business operating expenses ($), SALES95 = total gross farm receipts, NTOTEXP = number of farms reporting
+1996_exp | Farm business operating expenses and paid agricultural labour | TOTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting, SALES95 = total gross farm receipts
+1996_rec | Gross farm receipts | VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($)
+2001_exp_rec | Operating expenses and total gross farm receipts | OTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting, VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($) 
+2006_exp | Farm business operating expenses and paid agricultural labour | TOTEXP = Total farm business operating expenses($), NTOTEXP = number of farms reporting
+2006_rec | Gross farm receipts | VAL_SALESXFP = Total gross farm receipts (excluding forest products sold)($)
+2011_exp_rec | Capital, expenses and gross farm receipts | VAL_SALESXFP = Total value of gross farm receipts, TOTEXP = Total farm business operating expenses, NTOTEXP = Number of farms reporting
 
 I'm also going to need to narrow down the geographic scope of for my analysis, so I am going to select the following Census Agricultural Regions (CAR):
 1. Vancouver Island-Coast
