@@ -206,7 +206,7 @@ I wasn't able to also order the legend.
 
 
 
-#### 1.3 Writing to file, Reading
+## 2. Writing to file, Reading
 
 I'm going to try writing the re-ordered dataframe to a csv file.
 
@@ -232,7 +232,10 @@ read_csv("rec_exp_06_BC.csv")
 
 While the csv file is still in the specified order, the AGOPCAR variable is now a character, once again. So some information has been lost.
 
+## 3. Visualization Design
 
+
+## 4. Writing figures to file
 
 
 
