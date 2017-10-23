@@ -7,18 +7,25 @@ output:
 
 ## 0. Pre-amble
 
-First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code.
+I'm going to use both the gapminder dataset and a dataset from the Canadian Census of Agriculture to go through the exercises for hw05.
+
+First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a>...)
 
 ```{r}
+library("wesanderson")
 library(gapminder)
 library(tidyverse)
 library(knitr)
 options(knitr.table.format = 'markdown')
 library(forcats)
 library(readxl) #package already downloaded (bundled in the tidyverse package!) for reading excel files
+library(RColorBrewer)
 ```
 
-I'm going to use the gapminder dataset to go through the exercises for hw05. First I'll refresh my memory of what I'm working with here...
+
+## 1. Factor Management
+
+Starting with the gapminder dataset, I'll refresh my memory of what I'm working with here...
 
 ```{r}
 gapminder
@@ -26,9 +33,6 @@ gapminder
 
 
 As I know this assignment works with factors, I've noted which variables are factors.
-
-
-## 1. Factor Management
 
 I want to drop observations for Oceania, and then drop the unused factor levels (left by Oceania's absense). First let me take a look at the number of factor levels (and associated number of observations for each) there are for the variable ```Continent```:
 
@@ -59,3 +63,176 @@ nlevels(gap_5_dropped$continent)
 nlevels(gap_5_dropped$continent) # total # levels for continent (factor)
 fct_count(gap_5_dropped$continent) # number of obs per factor using forcats package
 ```
+
+Success!
+
+### 1.2 Using factors in BC Agriculture data
+
+I'll first bring in and take a look at these 2 additional dataset (stored as an excel file in my working directory)
+
+```{r}
+exp06 <- read_excel("2006_Expenses.xls")
+rec06 <- read_excel("2006_Receipts.xls")
+fru06 <- read_excel("2006_Fruits.xls")
+View(exp06)
+View(rec06)
+View(fru06)
+```
+
+These are somewhat large files (2087 observations each and between 17 and 52 variables. So I'd like to zoom in on the measures and regions I am most interested in (see <a href="">my README.md file</a> for more details.
+
+#### 1.2.1 Prepping the data
+
+I'll use a combination of select and filter to create new dataframes with the information I care to look at (variables in the readme file and the Census Agricultural Regions (CARs) in BC), and then I'll do some work with factors. 
+
+```{r}
+rec06_BC <- rec06 %>% # Dataframe for gross farm receipts
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %>% #leaving enough information for future analyses
+  filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
+
+exp06_BC <- exp06 %>%  #Dataframe for total farm expenses
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, TOTEXP) %>% 
+  filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
+
+fru06_BC <- fru06 %>% 
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, BLUEBTA) %>% 
+  filter(AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
+```
+
+Great! Much more manageable. Now I'll look at the dataframes to see how the AGOCAR numbers (a categorical variable) and AREANAME are stored.
+
+```{r}
+str(exp06_BC$AREANAME)
+str(rec06_BC$AGOPCAR)
+```
+
+AREANAME is a character, as would be expected, and AGOPCAR is stored as numerical. I'd like to store the AGOPCAR as a factor (since it corresponds to the categorical variable of AREANAME). 
+
+```{r}
+rec06_BC$AGOPCAR <- as_factor(as.character(rec06_BC$AGOPCAR)) 
+```
+
+Now I'd like to see if I can rename the factor with the CAR names...
+
+```{r}
+levels(rec06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+```
+
+Success (and I can see that the names are accurate because I still have the AREANAME column). 
+
+Now I'd like to do the same with the expenses data...
+
+```{r}
+exp06_BC$AGOPCAR <- as_factor(as.character(exp06_BC$AGOPCAR))
+levels(exp06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+```
+
+And now I'll join these two dataframes and drop unnecessary variables..,
+
+```{r}
+rec_exp_06_BC <- left_join(exp06_BC, rec06_BC) %>% 
+  select(HDPROV, AGOPCAR, TOTEXP, VAL_SALESXFP)
+```
+
+Great! Now this is ready for some analysis... 
+
+
+#### 1.2.2 Re-ordering the factors in a principled way
+
+Check default ordering..
+```{r}
+rec_exp_06_BC$AGOPCAR %>% 
+  levels()
+```
+
+I'd like to calculate the percentage of sales that are profit for each region as a summary statistic, then re-order the data based on this. However, I have realized that my variables of TOTEXP and VAL_SALESXFP are currently in the character format! Not going to work for these calculations. So first I'll convert these to numerical.
+
+```{r}
+rec_exp_06_BC$TOTEXP <- as.numeric(rec_exp_06_BC$TOTEXP) # Converting to numeric
+str(rec_exp_06_BC$TOTEXP) # Checking to be sure it worked
+rec_exp_06_BC$VAL_SALESXFP <- as.numeric(rec_exp_06_BC$VAL_SALESXFP)
+str(rec_exp_06_BC$VAL_SALESXFP)
+```
+
+```{r}
+fct_reorder(rec_exp_06_BC$AGOPCAR, rec_exp_06_BC$VAL_SALESXFP, .desc = TRUE) %>% 
+  levels()
+```
+
+Now I will plot the total gross farm receipts (sales) by the ordered CARs. Only, the colour palette I have been dying to use only has 5 colours (wohn-wohn), so I am going to only plot 5 of the regions.
+
+```{r}
+rec_exp_06_BC %>% 
+  filter(AGOPCAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo")) %>% 
+  ggplot(aes(x = fct_reorder(AGOPCAR, VAL_SALESXFP, .desc = TRUE), y = TOTEXP)) +
+  geom_col(aes(fill = AGOPCAR)) +
+  labs(x="Census Agricultural Region", y="Total Farm Operating Expenses", title="Total Operating Expenses on Farms by Census Agricultural Region in B.C.") +
+  scale_fill_manual(values = wes_palette("Cavalcanti")) + 
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
+```
+
+Success!
+
+Now, to make sure I accomplish the tasks from the homework, I'll create a new variable (instead of a summary statistic) that takes into account both measures of sales and expenses ((expenses / sales) * 100).
+
+```{r}
+rec_exp_06_BC %>% 
+  mutate(perc_exp =(TOTEXP/VAL_SALESXFP)*100) %>% 
+  knitr::kable()
+```
+
+Now I'll re-order based on this new variable, and plot that...
+
+```{r}
+rec_exp_06_BC %>% 
+  filter(AGOPCAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo", "Kootenay", "Nechako")) %>% 
+  mutate(perc_exp = (TOTEXP/VAL_SALESXFP)*100) %>% 
+  ggplot(aes(x = fct_reorder(AGOPCAR, perc_exp, .desc = TRUE), y = perc_exp)) +
+  geom_col(aes(fill = AGOPCAR)) +
+  labs(x="Census Agricultural Region", y="Operating Expenses as Percent of Farm Receipts", title="Expenses as a Percent of Farm Sales in B.C.") +
+  scale_fill_manual(values = wes_palette("BottleRocket")) + 
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
+```
+
+I wasn't able to also order the legend.
+
+
+
+#### 1.3 Writing to file, Reading
+
+I'm going to try writing the re-ordered dataframe to a csv file.
+
+```{r}
+fct_reorder(rec_exp_06_BC$AGOPCAR, rec_exp_06_BC$VAL_SALESXFP, .desc = TRUE) %>% 
+  write_csv("order_sales_06.csv")
+```
+Using the ```fct_reorder``` function won't allow me to do this, as it doesn't re-order the whole dataframe in this case. 
+
+
+I found this other way to re-order by the dataframe using indexing:
+
+```{r}
+rec_exp_06_BC[order(rec_exp_06_BC$VAL_SALESXFP, decreasing = TRUE),] %>% # Keep columns the way they are but order the rows by Sales
+  write_csv("rec_exp_06_BC.csv")
+```
+
+Now I'll bring it back in...
+
+```{r}
+read_csv("rec_exp_06_BC.csv")
+```
+
+While the csv file is still in the specified order, the AGOPCAR variable is now a character, once again. So some information has been lost.
+
+
+
+
+
