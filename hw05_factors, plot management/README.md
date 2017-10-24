@@ -1,6 +1,9 @@
 # Homework 05
 ## By Susanna Klassen
 
+- <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.html">html file for hw05</a>
+- <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md">md file for hw05</a>
+
 ## What I did
 
 Throughout this assignment, I waffled between working with the Gapminder dataset (fun, interesting, and easy to work with) and working with data from the Canadian Agricultural Census (lots of work to clean and import, each year of data is in a different file, and messy in terms of variables, but applicable to my research). Ultimately, this homework was a bit of a roller coaster, because I chose the latter, but often met barriers I was not able to surmount in the time that I had. I thought it better to include my failed attempts at doing something new and different than to simply include where my tasks were successful, so, please bear with me in this assignment as I guide you through my process, and when we arrive at some fairly simple figures at the end, recall that I learned more then I bargained for in the process.
