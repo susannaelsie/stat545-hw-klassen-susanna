@@ -7,9 +7,10 @@ output:
 
 ## 0. Pre-amble
 
+
 I'm going to use both the gapminder dataset and a dataset from the Canadian Census of Agriculture to go through the exercises for hw05.
 
-First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a>...)
+First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a> that I downloaded...)
 
 ```{r}
 library("wesanderson")
@@ -36,7 +37,7 @@ As I know this assignment works with factors, I've noted which variables are fac
 
 I want to drop observations for Oceania, and then drop the unused factor levels (left by Oceania's absense). First let me take a look at the number of factor levels (and associated number of observations for each) there are for the variable ```Continent```:
 
-### 1.1 Dropping Oceania from Gapminder
+### 1.1 Gapminder: Dropping Oceania
 
 ```{r}
 nlevels(gapminder$continent) # total # levels for continent (factor)
@@ -66,7 +67,7 @@ fct_count(gap_5_dropped$continent) # number of obs per factor using forcats pack
 
 Success!
 
-### 1.2 Using factors in BC Agriculture data
+### 1.2 Ag Census: Using factors in BC Agriculture data
 
 Initially I was only going to bring in and take a look at these first two datasets on expensese and receipts(sales) on farms in the year 2006 (stored as an excel file in my working directory). However, once I got further along in the assignment I decided to bring in additional data for other years so that I have more to work with. Unfortnately, this data is not available in one excel file, but must be downloaded as individual files for each year (and sometimes for each variable). The readme.md file for this assignment has more description of each of these datasets. 
 
@@ -93,27 +94,27 @@ exp_rec_86_BC <- exp_rec_86 %>% # note different column names for many of the da
   filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) # note that region names and numbers changed in 2001, so using AREAIDs here
 
 exp_rec_91_BC <- exp_rec_91 %>% # 
-  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %>% 
+  select(AREAID, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %>% 
   filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
 
 rec96_BC <- rec96 %>% 
-  select(AREAID, PROV, CAR, CD, AREANAME, SALES95) %>% 
+  select(AREAID, CAR, CD, AREANAME, SALES95) %>% 
   filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
 
 exp96_BC <- exp96 %>% 
-  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, NTOTEXP) %>% 
+  select(AREAID, CAR, CD, AREANAME, TOTEXP, NTOTEXP) %>% 
   filter(AREAID %in% c("590100000", "590200000", "590300000", "590400000", "590500000", "590600000", "590700000", "590800000")) 
 
 exp_rec_2001_BC <- exp_rec_2001 %>% 
-  select(PROV, CAR2, CD, `GEO NAMES`, totexp, ntotexp, salesxfp) %>% 
+  select(CAR2, CD, `GEO NAMES`, totexp, ntotexp, salesxfp) %>% 
   filter(CD == 0, `GEO NAMES` %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
 
 rec06_BC <- rec06 %>% 
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %>% 
+  select(AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %>% 
   filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
 
 exp06_BC <- exp06 %>%  
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, NTOTEXP, TOTEXP) %>% 
+  select(AGOPCAR, CENSUSD, AREANAME, NTOTEXP, TOTEXP) %>% 
   filter(CENSUSD == 0, AREANAME %in% c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River"))
 
 exp_rec_2011_BC <- exp_rec_2011 %>% 
@@ -146,21 +147,41 @@ So I know that I will have some conversions to do. I'll get those out of the way
 
 #### 1.2.2 Changing ```things```
 
-I'm going to start with a pilot test for converting one variable to a factor. 
+I'm going to start with a pilot test for converting one variable to a factor, and editing the names of the levels. 
 
 ```{r}
 rec06_BC$AGOPCAR <- as_factor(as.character(rec06_BC$AGOPCAR)) 
-```
-
-Now I'd like to see if I can rename the factor with the CAR names...
-
-```{r}
 levels(rec06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
 ```
 
-Success (and I can see that the names are accurate because I still have the AREANAME column). 
 
-Now I'd like to do the same with the other dataframes, and ensure they have a common factor name and level  for Census Agricultural Region (as well as a unique identifier) so that I can join them later. I will go through the following process for each dataframe before merging them:
+Success (and I can see that the names are accurate because I still have the AREANAME column). Doing the same with the other 2006 dataframe for expenses:
+
+```{r}
+exp06_BC$AGOPCAR <- as_factor(as.character(exp06_BC$AGOPCAR))
+levels(exp06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+```
+
+
+And now I'll join these two dataframes, add a variable for year, rename variables, transform those that need to be numeric, and select only those that I want..
+
+```{r}
+exp_rec_06_BC <- left_join(exp06_BC, rec06_BC)
+exp_rec_06_BC$TOTEXP <- as.numeric(exp_rec_06_BC$TOTEXP)
+exp_rec_06_BC$VAL_SALESXFP <- as.numeric(exp_rec_06_BC$VAL_SALESXFP)
+str(exp_rec_06_BC)
+```
+
+```{r}
+exp_rec_06 <- exp_rec_06_BC %>% 
+  mutate(year = 2006) %>% # adding a variable for year
+  rename(CAR = AGOPCAR, nfarms = NTOTEXP, totexp = TOTEXP, sales = VAL_SALESXFP) %>% 
+  select(CAR, year, nfarms, totexp, sales)
+```
+
+##### 1.2.2.1 Nonsense 
+
+Now I'd like to do the same with the **other dataframes** (years 86 - 2001, and 2011), and ensure they have a common factor name and level  for Census Agricultural Region (as well as a unique identifier) so that I can join them later. I will go through the following process for each dataframe before merging them:
 1. Create/change variable to include unique number for each CAR region (and ensure these are consistent with numbering used post 2001, not prior to)
 2. Convert variable types as needed 
 3. Drop unused variables
@@ -186,6 +207,11 @@ exp_rec_86_BC %>%
 
 levels(exp_rec_86_BC$CAR)
 ```
+
+I realized at this point that the boundaries, names and numbers for some of the CAR regions are different here, and investigated to confirm that indeed CAR 1 was a different region in 1986 than from 2001 onwards. Moreoever, it wasn't just a name time, but the Census Divisions that make up the larger CARs are also different (e.g. in 2001 Okanagan and Thompson CARs were agglomerated to make the Thompson-Okanagan CAR.)
+
+I decided to continue with this, though...
+
 
 1991 data:
 
@@ -225,6 +251,9 @@ exp96_BC %>%
   knitr::kable()
 ```
 
+I noticed here that things started getting out of order...
+
+
 1996 Receipts Data:
 
 
@@ -244,64 +273,84 @@ rec96_BC %>%
   select(AREAID, CAR, YEAR, SALES95) # dropping unused variables
 ```
 
+This is where things started to fall apart. I guess I don't understand factors *that* well. 
 
-2006 data:
+#### 1.2.3 Back to data I can work with
+
+I know that for 2001 and 2011 the regions are the same, so I don't need to do any-rearranging, and it is acceptable to compare changes at the regional level. So I'll continue wrangling in these other 2 dataframes so that I can join all 3 of them. 
 
 ```{r}
-exp06_BC$AGOPCAR <- as_factor(as.character(exp06_BC$AGOPCAR))
-levels(exp06_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+exp_rec_2001_BC$CAR2 <- as_factor(as.character(exp_rec_2001_BC$CAR2))
+levels(exp_rec_2001_BC$CAR2)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
 
+exp_rec_2001_BC$totexp <- as.numeric(exp_rec_2001_BC$totexp) # transforming from character to numeric 
+str(exp_rec_2001_BC$totexp)
+exp_rec_2001_BC$salesxfp <- as.numeric(exp_rec_2001_BC$salesxfp)
+str(exp_rec_2001_BC$salesxfp)
+
+exp_rec_01 <- exp_rec_2001_BC %>% # assigning new name to save the table
+  mutate(year = 2001) %>% 
+  rename(CAR = CAR2, nfarms = ntotexp, sales = salesxfp) %>% 
+  select(CAR, year, nfarms, totexp, sales)
+```
+
+```{r}
+exp_rec_2011_BC$AGOPCAR <- as_factor(as.character(exp_rec_2011_BC$AGOPCAR))
+levels(exp_rec_2011_BC$AGOPCAR)<-c("Vancouver Island-Coast", "Lower Mainland-Southwest", "Thompson-Okanagan", "Kootenay", "Cariboo", "North Coast", "Nechako", "Peace River")
+
+exp_rec_2011_BC$TOTEXP <- as.numeric(exp_rec_2011_BC$TOTEXP) # transforming from character to numeric 
+str(exp_rec_2011_BC$TOTEXP)
+exp_rec_2011_BC$VAL_SALESXFP <- as.numeric(exp_rec_2011_BC$VAL_SALESXFP)
+str(exp_rec_2011_BC$VAL_SALESXFP)
+
+exp_rec_11 <- exp_rec_2011_BC %>% # assining a new nameto object to save
+  mutate(year = 2011) %>% 
+  rename(CAR = AGOPCAR, nfarms = NTOTEXP, totexp = TOTEXP, sales = VAL_SALESXFP) %>% 
+  select(CAR, year, nfarms, totexp, sales) 
 ```
 
 
+Now I'll join these three...
 
 ```{r}
-
+ij1_exp_rec <- full_join(exp_rec_01, exp_rec_06)
+exp_rec_01_11 <- full_join(ij1_exp_rec, exp_rec_11)
 ```
 
 
+Now this is data has been 'wrangled' [FINALLY!] and is ready for some plotting.
 
 
+### 1.3 Re-ordering the factors in a principled way
 
-And now I'll join these two dataframes and drop unnecessary variables..
+Before plotting this new dataframe ```exp_rec_01_11``` I will do some more work with factors with the first ag census dataframe that I joined for 2006. 
 
 ```{r}
-rec_exp_06_BC <- left_join(exp06_BC, rec06_BC) %>% 
-  select(HDPROV, AGOPCAR, TOTEXP, VAL_SALESXFP)
-```
-
-Now this is data has been 'wrangled' and is [nearly] ready for some plotting.
-
-
-#### 1.2.3 Re-ordering the factors in a principled way
-
-Check default ordering..
-```{r}
-rec_exp_06_BC$AGOPCAR %>% 
+exp_rec_06$CAR %>% 
   levels()
 ```
 
 I'd like to calculate the percentage of sales that are profit for each region as a summary statistic, then re-order the data based on this. However, I have realized that my variables of TOTEXP and VAL_SALESXFP are currently in the character format! Not going to work for these calculations. So first I'll convert these to numerical.
 
 ```{r}
-rec_exp_06_BC$TOTEXP <- as.numeric(rec_exp_06_BC$TOTEXP) # Converting to numeric
-str(rec_exp_06_BC$TOTEXP) # Checking to be sure it worked
-rec_exp_06_BC$VAL_SALESXFP <- as.numeric(rec_exp_06_BC$VAL_SALESXFP)
-str(rec_exp_06_BC$VAL_SALESXFP)
+exp_rec_06$totexp <- as.numeric(exp_rec_06$totexp) # Converting to numeric
+str(exp_rec_06$totexp) # Checking to be sure it worked
+exp_rec_06$sales <- as.numeric(exp_rec_06$sales)
+str(exp_rec_06$sales)
 ```
 
 ```{r}
-fct_reorder(rec_exp_06_BC$AGOPCAR, rec_exp_06_BC$VAL_SALESXFP, .desc = TRUE) %>% 
+fct_reorder(exp_rec_06$CAR, exp_rec_06$sales, .desc = TRUE) %>% 
   levels()
 ```
 
 Now I will plot the total gross farm receipts (sales) by the ordered CARs. Only, the colour palette I have been dying to use only has 5 colours (wohn-wohn), so I am going to only plot 5 of the regions.
 
-```{r}
-rec_exp_06_BC %>% 
-  filter(AGOPCAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo")) %>% 
-  ggplot(aes(x = fct_reorder(AGOPCAR, VAL_SALESXFP, .desc = TRUE), y = TOTEXP)) +
-  geom_col(aes(fill = AGOPCAR)) +
+```{r fig.width=11, fig.height=7}
+exp_rec_06 %>% 
+  filter(CAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo")) %>% 
+  ggplot(aes(x = fct_reorder(CAR, sales, .desc = TRUE), y = totexp)) +
+  geom_col(aes(fill = CAR)) +
   labs(x="Census Agricultural Region", y="Total Farm Operating Expenses", title="Total Operating Expenses on Farms by Census Agricultural Region in B.C.") +
   scale_fill_manual(values = wes_palette("Cavalcanti")) + 
   theme(axis.title = element_text(size=14),
@@ -316,19 +365,19 @@ Success!
 Now, to make sure I accomplish the tasks from the homework, I'll create a new variable (instead of a summary statistic) that takes into account both measures of sales and expenses ((expenses / sales) * 100).
 
 ```{r}
-rec_exp_06_BC %>% 
-  mutate(perc_exp =(TOTEXP/VAL_SALESXFP)*100) %>% 
+exp_rec_06 %>% 
+  mutate(perc_exp =(totexp/sales)*100) %>% 
   knitr::kable()
 ```
 
 Now I'll re-order based on this new variable, and plot that...
 
-```{r}
-rec_exp_06_BC %>% 
-  filter(AGOPCAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo", "Kootenay", "Nechako")) %>% 
-  mutate(perc_exp = (TOTEXP/VAL_SALESXFP)*100) %>% 
-  ggplot(aes(x = fct_reorder(AGOPCAR, perc_exp, .desc = TRUE), y = perc_exp)) +
-  geom_col(aes(fill = AGOPCAR)) +
+```{r fig.width=10}
+exp_rec_06 %>% 
+  filter(CAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo", "Kootenay", "Nechako")) %>% 
+  mutate(perc_exp = (totexp/sales)*100) %>% 
+  ggplot(aes(x = fct_reorder(CAR, perc_exp, .desc = TRUE), y = perc_exp)) +
+  geom_col(aes(fill = CAR)) +
   labs(x="Census Agricultural Region", y="Operating Expenses as Percent of Farm Receipts", title="Expenses as a Percent of Farm Sales in B.C.") +
   scale_fill_manual(values = wes_palette("BottleRocket")) + 
   theme(axis.title = element_text(size=14),
@@ -342,7 +391,7 @@ I wasn't able to also order the legend.
 
 
 
-## 2. Writing to file, Reading
+## 2. Writing to file, reading back
 
 I'm going to try writing the re-ordered dataframe to a csv file.
 
@@ -366,6 +415,42 @@ read_csv("rec_exp_06_BC.csv")
 While the csv file is still in the specified order, the AGOPCAR variable is now a character, once again. So some information has been lost.
 
 ## 3. Visualization Design
+
+
+### 3.1 Plot 1
+
+
+I'd like to see the change over time in gross farm receipts and expenses, and I am particularly interested in the Lower Mainland-Southwest. A super basic plot to start with would be a scatter plot of $ amount vs. year with a trendline for each variable.
+
+Way to put both expenses and sales in this plot?
+
+```{r}
+exp_rec_01_11 %>% 
+  ggplot(aes(year, sales, colour = CAR)) +
+  geom_point(aes()) +
+  geom_line()
+```
+
+
+### 3.2 Plot 2
+
+I
+
+```{r fig.width=10}
+exp_rec_01_11 %>% 
+  mutate(prof = (sales - totexp)) %>% 
+  filter(CAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo")) %>% 
+  ggplot(aes(year, prof, colour = CAR)) +
+  geom_line(size=1.5) +
+  scale_color_manual(values = wes_palette("Darjeeling")) +
+  scale_x_continuous(breaks=c(2001,2006,2011)) +
+  labs(x="Year", y="Estimated Farm Profit", title="Regional Difference Between Farm Sales and Expenses") +
+  theme(axis.title = element_text(size=14),
+        plot.title = element_text(size=16, hjust = 0.5),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.title = element_text(size=12))
+```
 
 
 ## 4. Writing figures to file

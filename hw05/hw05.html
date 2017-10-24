@@ -123,7 +123,7 @@ $(document).ready(function () {
 <div id="pre-amble" class="section level2">
 <h2>0. Pre-amble</h2>
 <p>I’m going to use both the gapminder dataset and a dataset from the Canadian Census of Agriculture to go through the exercises for hw05.</p>
-<p>First I’ll load all of the packages I’m going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a>…)</p>
+<p>First I’ll load all of the packages I’m going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a> that I downloaded…)</p>
 <pre class="r"><code>library(&quot;wesanderson&quot;)
 library(gapminder)
 library(tidyverse)</code></pre>
@@ -162,8 +162,8 @@ library(RColorBrewer)</code></pre>
 ## # ... with 1,694 more rows</code></pre>
 <p>As I know this assignment works with factors, I’ve noted which variables are factors.</p>
 <p>I want to drop observations for Oceania, and then drop the unused factor levels (left by Oceania’s absense). First let me take a look at the number of factor levels (and associated number of observations for each) there are for the variable <code>Continent</code>:</p>
-<div id="dropping-oceania-from-gapminder" class="section level3">
-<h3>1.1 Dropping Oceania from Gapminder</h3>
+<div id="gapminder-dropping-oceania" class="section level3">
+<h3>1.1 Gapminder: Dropping Oceania</h3>
 <pre class="r"><code>nlevels(gapminder$continent) # total # levels for continent (factor)</code></pre>
 <pre><code>## [1] 5</code></pre>
 <pre class="r"><code>fct_count(gapminder$continent) # number of obs per factor using forcats package</code></pre>
@@ -195,48 +195,539 @@ nlevels(gap_5_dropped$continent)</code></pre>
 ## 4   Europe   360</code></pre>
 <p>Success!</p>
 </div>
-<div id="using-factors-in-bc-agriculture-data" class="section level3">
-<h3>1.2 Using factors in BC Agriculture data</h3>
-<p>I’ll first bring in and take a look at these 2 additional dataset (stored as an excel file in my working directory)</p>
-<pre class="r"><code>exp06 &lt;- read_excel(&quot;2006_Expenses.xls&quot;)
-rec06 &lt;- read_excel(&quot;2006_Receipts.xls&quot;)
-fru06 &lt;- read_excel(&quot;2006_Fruits.xls&quot;)</code></pre>
-<p>These are somewhat large files (2087 observations each and between 17 and 52 variables. So I’d like to zoom in on the measures and regions I am most interested in (see <a href>my README.md file</a> for more details.</p>
+<div id="ag-census-using-factors-in-bc-agriculture-data" class="section level3">
+<h3>1.2 Ag Census: Using factors in BC Agriculture data</h3>
+<p>Initially I was only going to bring in and take a look at these first two datasets on expensese and receipts(sales) on farms in the year 2006 (stored as an excel file in my working directory). However, once I got further along in the assignment I decided to bring in additional data for other years so that I have more to work with. Unfortnately, this data is not available in one excel file, but must be downloaded as individual files for each year (and sometimes for each variable). The readme.md file for this assignment has more description of each of these datasets.</p>
+<pre class="r"><code>exp_rec_86 &lt;- read_excel(&quot;1986_exp_rec.xls&quot;)
+exp_rec_91 &lt;- read_excel(&quot;1991_exp_rec.xls&quot;)
+exp96 &lt;- read_excel(&quot;1996_exp.xls&quot;)
+rec96 &lt;- read_excel(&quot;1996_rec.xls&quot;)
+exp_rec_2001 &lt;- read_excel(&quot;2001_exp_rec.xls&quot;)
+exp06 &lt;- read_excel(&quot;2006_exp.xls&quot;)
+rec06 &lt;- read_excel(&quot;2006_rec.xls&quot;)
+exp_rec_2011 &lt;- read_excel(&quot;2011_exp_rec.xls&quot;)</code></pre>
+<p>These are somewhat large files (~2100 observations each and between 16 and 106 variables. So I’d like to zoom in on the measures and regions I am most interested in (see <a href>my README.md file</a> for more details.</p>
 <div id="prepping-the-data" class="section level4">
 <h4>1.2.1 Prepping the data</h4>
 <p>I’ll use a combination of select and filter to create new dataframes with the information I care to look at (variables in the readme file and the Census Agricultural Regions (CARs) in BC), and then I’ll do some work with factors.</p>
-<pre class="r"><code>rec06_BC &lt;- rec06 %&gt;% # Dataframe for gross farm receipts
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %&gt;% #leaving enough information for future analyses
+<pre class="r"><code>exp_rec_86_BC &lt;- exp_rec_86 %&gt;% # note different column names for many of the datasets (though same variables)
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %&gt;% #leaving enough information for future analyses
+  filter(AREAID %in% c(&quot;590100000&quot;, &quot;590200000&quot;, &quot;590300000&quot;, &quot;590400000&quot;, &quot;590500000&quot;, &quot;590600000&quot;, &quot;590700000&quot;, &quot;590800000&quot;)) # note that region names and numbers changed in 2001, so using AREAIDs here
+
+exp_rec_91_BC &lt;- exp_rec_91 %&gt;% # 
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, SALES95, NTOTEXP) %&gt;% 
+  filter(AREAID %in% c(&quot;590100000&quot;, &quot;590200000&quot;, &quot;590300000&quot;, &quot;590400000&quot;, &quot;590500000&quot;, &quot;590600000&quot;, &quot;590700000&quot;, &quot;590800000&quot;)) 
+
+rec96_BC &lt;- rec96 %&gt;% 
+  select(AREAID, PROV, CAR, CD, AREANAME, SALES95) %&gt;% 
+  filter(AREAID %in% c(&quot;590100000&quot;, &quot;590200000&quot;, &quot;590300000&quot;, &quot;590400000&quot;, &quot;590500000&quot;, &quot;590600000&quot;, &quot;590700000&quot;, &quot;590800000&quot;)) 
+
+exp96_BC &lt;- exp96 %&gt;% 
+  select(AREAID, PROV, CAR, CD, AREANAME, TOTEXP, NTOTEXP) %&gt;% 
+  filter(AREAID %in% c(&quot;590100000&quot;, &quot;590200000&quot;, &quot;590300000&quot;, &quot;590400000&quot;, &quot;590500000&quot;, &quot;590600000&quot;, &quot;590700000&quot;, &quot;590800000&quot;)) 
+
+exp_rec_2001_BC &lt;- exp_rec_2001 %&gt;% 
+  select(PROV, CAR2, CD, `GEO NAMES`, totexp, ntotexp, salesxfp) %&gt;% 
+  filter(CD == 0, `GEO NAMES` %in% c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;))
+
+rec06_BC &lt;- rec06 %&gt;% 
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP) %&gt;% 
   filter(CENSUSD == 0, AREANAME %in% c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;))
 
-exp06_BC &lt;- exp06 %&gt;%  #Dataframe for total farm expenses
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, TOTEXP) %&gt;% 
+exp06_BC &lt;- exp06 %&gt;%  
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, NTOTEXP, TOTEXP) %&gt;% 
   filter(CENSUSD == 0, AREANAME %in% c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;))
 
-fru06_BC &lt;- fru06 %&gt;% 
-  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, BLUEBTA) %&gt;% 
-  filter(AREANAME %in% c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;))</code></pre>
-<p>Great! Much more manageable. Now I’ll look at the dataframes to see how the AGOCAR numbers (a categorical variable) and AREANAME are stored.</p>
-<pre class="r"><code>str(exp06_BC$AREANAME)</code></pre>
-<pre><code>##  chr [1:8] &quot;Vancouver Island-Coast&quot; &quot;Lower Mainland-Southwest&quot; ...</code></pre>
-<pre class="r"><code>str(rec06_BC$AGOPCAR)</code></pre>
-<pre><code>##  num [1:8] 1 2 3 4 5 6 7 8</code></pre>
-<p>AREANAME is a character, as would be expected, and AGOPCAR is stored as numerical. I’d like to store the AGOPCAR as a factor (since it corresponds to the categorical variable of AREANAME).</p>
+exp_rec_2011_BC &lt;- exp_rec_2011 %&gt;% 
+  select(HDPROV, AGOPCAR, CENSUSD, AREANAME, VAL_SALESXFP, NTOTEXP, TOTEXP) %&gt;% 
+  filter(HDPROV == 59, AGOPCAR %in% c(&quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;04&quot;, &quot;05&quot;, &quot;06&quot;, &quot;07&quot;, &quot;08&quot;), CENSUSD == &quot;00&quot;) # once again need to use different filter because areas are named differently</code></pre>
+<p>Great! Much more manageable. Now I’ll remove the larger dataframes, which I won’t be needing anymore.</p>
+<pre class="r"><code>rm(exp_rec_2001, exp_rec_2011, exp_rec_86, exp_rec_91, exp06, rec06, exp96, rec96)</code></pre>
+<p>Now I will take look at the new [smaller] dataframes to see how the region names or region identifier are stored /what types of objects they are. I’ll just check a subset of the dataframes to see what I am working with.</p>
+<pre class="r"><code>str(exp_rec_86_BC)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  8 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : num  1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;Kootenay Region - Région de Kootenay&quot; &quot;Okanagan Region - Région d'Okanagan&quot; &quot;Thompson Region - Région de Thompson&quot; &quot;Mainland Region - Région de Mainland&quot; ...
+##  $ TOTEXP  : chr  &quot;22668829&quot; &quot;164948667&quot; &quot;45715690&quot; &quot;510236751&quot; ...
+##  $ SALES95 : num  2.42e+07 1.72e+08 4.54e+07 5.89e+08 8.28e+07 ...
+##  $ NTOTEXP : num  859 4880 1010 5705 2178 ...</code></pre>
+<pre class="r"><code>str(exp_rec_91_BC)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  8 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : num  1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;- Kootenay Region - Région de Kootenay&quot; &quot;- Okanagan Region - Région d'Okanagan&quot; &quot;- Thompson Region - Région de Thompson&quot; &quot;- Mainland Region - Région de Mainland&quot; ...
+##  $ TOTEXP  : num  2.73e+07 1.85e+08 5.30e+07 6.03e+08 9.49e+07 ...
+##  $ SALES95 : chr  &quot;31563212&quot; &quot;205244759&quot; &quot;58097491&quot; &quot;741417579&quot; ...
+##  $ NTOTEXP : num  883 4782 1143 5945 2308 ...</code></pre>
+<pre class="r"><code>str(exp06_BC)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  6 variables:
+##  $ HDPROV  : num  59 59 59 59 59 59 59 59
+##  $ AGOPCAR : num  1 2 3 4 5 6 7 8
+##  $ CENSUSD : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;Vancouver Island-Coast&quot; &quot;Lower Mainland-Southwest&quot; &quot;Thompson-Okanagan&quot; &quot;Kootenay&quot; ...
+##  $ NTOTEXP : num  2855 5410 5700 1349 1781 ...
+##  $ TOTEXP  : chr  &quot;155534407&quot; &quot;1442818662&quot; &quot;423432858&quot; &quot;65363842&quot; ...</code></pre>
+<p>Oh boy - all sorts of fun going on there.</p>
+<ul>
+<li>For the <strong>1986</strong> data, AREAID is a character, AREANAME is a character, TOTEXP is also a character (will have to change), whereas the other 2 measures/variables are numeric.</li>
+<li>For the <strong>1991</strong> data, same thing.</li>
+<li>For the <strong>2006</strong> data, AREANAME is a character, AGOPCAR is numeric, and TOTEXP is also a character (will have to change).</li>
+</ul>
+<p>So I know that I will have some conversions to do. I’ll get those out of the way now.</p>
+</div>
+<div id="changing-things" class="section level4">
+<h4>1.2.2 Changing <code>things</code></h4>
+<p>I’m going to start with a pilot test for converting one variable to a factor.</p>
 <pre class="r"><code>rec06_BC$AGOPCAR &lt;- as_factor(as.character(rec06_BC$AGOPCAR)) </code></pre>
 <p>Now I’d like to see if I can rename the factor with the CAR names…</p>
 <pre class="r"><code>levels(rec06_BC$AGOPCAR)&lt;-c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;)</code></pre>
-<p>Success (and I can see that the names are accurate because I still have the AREANAME column).</p>
-<p>Now I’d like to do the same with the expenses data…</p>
+<p>Success (and I can see that the names are accurate because I still have the AREANAME column). Doing the same with the other 2006 dataframe for expenses:</p>
 <pre class="r"><code>exp06_BC$AGOPCAR &lt;- as_factor(as.character(exp06_BC$AGOPCAR))
 levels(exp06_BC$AGOPCAR)&lt;-c(&quot;Vancouver Island-Coast&quot;, &quot;Lower Mainland-Southwest&quot;, &quot;Thompson-Okanagan&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;North Coast&quot;, &quot;Nechako&quot;, &quot;Peace River&quot;)</code></pre>
-<p>And now I’ll join these two dataframes and drop unnecessary variables..,</p>
+<p>And now I’ll join these two dataframes and drop unnecessary variables..</p>
 <pre class="r"><code>rec_exp_06_BC &lt;- left_join(exp06_BC, rec06_BC) %&gt;% 
-  select(HDPROV, AGOPCAR, TOTEXP, VAL_SALESXFP)</code></pre>
+  select(HDPROV, AGOPCAR, TOTEXP, NTOTEXP, VAL_SALESXFP) </code></pre>
 <pre><code>## Joining, by = c(&quot;HDPROV&quot;, &quot;AGOPCAR&quot;, &quot;CENSUSD&quot;, &quot;AREANAME&quot;)</code></pre>
-<p>Great! Now this is ready for some analysis…</p>
+<pre class="r"><code>  knitr::kable</code></pre>
+<pre><code>## function (x, format, digits = getOption(&quot;digits&quot;), row.names = NA, 
+##     col.names = NA, align, caption = NULL, format.args = list(), 
+##     escape = TRUE, ...) 
+## {
+##     if (missing(format) || is.null(format)) 
+##         format = getOption(&quot;knitr.table.format&quot;)
+##     if (is.null(format)) 
+##         format = if (is.null(pandoc_to())) 
+##             switch(out_format() %n% &quot;markdown&quot;, latex = &quot;latex&quot;, 
+##                 listings = &quot;latex&quot;, sweave = &quot;latex&quot;, html = &quot;html&quot;, 
+##                 markdown = &quot;markdown&quot;, rst = &quot;rst&quot;, stop(&quot;table format not implemented yet!&quot;))
+##         else if (isTRUE(opts_knit$get(&quot;kable.force.latex&quot;)) &amp;&amp; 
+##             is_latex_output()) {
+##             &quot;latex&quot;
+##         }
+##         else &quot;pandoc&quot;
+##     if (is.function(format)) 
+##         format = format()
+##     if (format != &quot;latex&quot; &amp;&amp; !missing(align) &amp;&amp; length(align) == 
+##         1L) 
+##         align = strsplit(align, &quot;&quot;)[[1]]
+##     if (!is.null(caption) &amp;&amp; !is.na(caption)) 
+##         caption = paste0(create_label(&quot;tab:&quot;, opts_current$get(&quot;label&quot;), 
+##             latex = (format == &quot;latex&quot;)), caption)
+##     if (inherits(x, &quot;list&quot;)) {
+##         if (format == &quot;pandoc&quot; &amp;&amp; is_latex_output()) 
+##             format = &quot;latex&quot;
+##         res = lapply(x, kable, format = format, digits = digits, 
+##             row.names = row.names, col.names = col.names, align = align, 
+##             caption = NA, format.args = format.args, escape = escape, 
+##             ...)
+##         res = unlist(lapply(res, paste, collapse = &quot;\n&quot;))
+##         res = if (format == &quot;latex&quot;) {
+##             kable_latex_caption(res, caption)
+##         }
+##         else if (format == &quot;html&quot; || (format == &quot;pandoc&quot; &amp;&amp; is_html_output())) 
+##             kable_html(matrix(paste0(&quot;\n\n&quot;, res, &quot;\n\n&quot;), 1), 
+##                 caption = caption, escape = FALSE, table.attr = &quot;class=\&quot;kable_wrapper\&quot;&quot;)
+##         else {
+##             res = paste(res, collapse = &quot;\n\n&quot;)
+##             if (format == &quot;pandoc&quot;) 
+##                 kable_pandoc_caption(res, caption)
+##             else res
+##         }
+##         return(structure(res, format = format, class = &quot;knitr_kable&quot;))
+##     }
+##     if (identical(col.names, NA)) 
+##         col.names = colnames(x)
+##     if (!is.matrix(x)) 
+##         x = as.data.frame(x)
+##     m = ncol(x)
+##     isn = if (is.matrix(x)) 
+##         rep(is.numeric(x), m)
+##     else sapply(x, is.numeric)
+##     if (missing(align) || (format == &quot;latex&quot; &amp;&amp; is.null(align))) 
+##         align = ifelse(isn, &quot;r&quot;, &quot;l&quot;)
+##     digits = rep(digits, length.out = m)
+##     for (j in seq_len(m)) {
+##         if (is_numeric(x[, j])) 
+##             x[, j] = round(x[, j], digits[j])
+##     }
+##     if (any(isn)) {
+##         if (is.matrix(x)) {
+##             if (is.table(x) &amp;&amp; length(dim(x)) == 2) 
+##                 class(x) = &quot;matrix&quot;
+##             x = format_matrix(x, format.args)
+##         }
+##         else x[, isn] = format_args(x[, isn], format.args)
+##     }
+##     if (is.na(row.names)) 
+##         row.names = has_rownames(x)
+##     if (!is.null(align)) 
+##         align = rep(align, length.out = m)
+##     if (row.names) {
+##         x = cbind(` ` = rownames(x), x)
+##         if (!is.null(col.names)) 
+##             col.names = c(&quot; &quot;, col.names)
+##         if (!is.null(align)) 
+##             align = c(&quot;l&quot;, align)
+##     }
+##     n = nrow(x)
+##     x = replace_na(base::format(as.matrix(x), trim = TRUE, justify = &quot;none&quot;), 
+##         is.na(x))
+##     if (!is.matrix(x)) 
+##         x = matrix(x, nrow = n)
+##     if (ncol(x) == 1 &amp;&amp; format == &quot;pandoc&quot;) 
+##         format = &quot;markdown&quot;
+##     x = trimws(x)
+##     colnames(x) = col.names
+##     if (format != &quot;latex&quot; &amp;&amp; length(align) &amp;&amp; !all(align %in% 
+##         c(&quot;l&quot;, &quot;r&quot;, &quot;c&quot;))) 
+##         stop(&quot;'align' must be a character vector of possible values 'l', 'r', and 'c'&quot;)
+##     attr(x, &quot;align&quot;) = align
+##     res = do.call(paste(&quot;kable&quot;, format, sep = &quot;_&quot;), list(x = x, 
+##         caption = caption, escape = escape, ...))
+##     structure(res, format = format, class = &quot;knitr_kable&quot;)
+## }
+## &lt;environment: namespace:knitr&gt;</code></pre>
+<p>Now I’d like to do the same with the other dataframes, and ensure they have a common factor name and level for Census Agricultural Region (as well as a unique identifier) so that I can join them later. I will go through the following process for each dataframe before merging them: 1. Create/change variable to include unique number for each CAR region (and ensure these are consistent with numbering used post 2001, not prior to) 2. Convert variable types as needed 3. Drop unused variables 4. Add a column for year</p>
+<p>1986 data:</p>
+<pre class="r"><code>exp_rec_86_BC$CAR &lt;- as_factor(as.character(exp_rec_86_BC$CAR)) #Re-naming to simplify names
+  levels(exp_rec_86_BC$CAR)&lt;-c(&quot;Kootenay&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Mainland&quot;, &quot;Island&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) 
+  
+ord_86 &lt;-exp_rec_86_BC$CAR %&gt;% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel(&quot;Island&quot;, &quot;Mainland&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) %&gt;% 
+  levels()
+
+exp_rec_86_BC$TOTEXP &lt;- as.numeric(exp_rec_86_BC$TOTEXP) # change to numeric
+str(exp_rec_86_BC) # check</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  8 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : Factor w/ 8 levels &quot;Kootenay&quot;,&quot;Okanagan&quot;,..: 1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;Kootenay Region - Région de Kootenay&quot; &quot;Okanagan Region - Région d'Okanagan&quot; &quot;Thompson Region - Région de Thompson&quot; &quot;Mainland Region - Région de Mainland&quot; ...
+##  $ TOTEXP  : num  2.27e+07 1.65e+08 4.57e+07 5.10e+08 7.81e+07 ...
+##  $ SALES95 : num  2.42e+07 1.72e+08 4.54e+07 5.89e+08 8.28e+07 ...
+##  $ NTOTEXP : num  859 4880 1010 5705 2178 ...</code></pre>
+<pre class="r"><code>exp_rec_86_BC %&gt;% 
+  mutate(YEAR = 1986) %&gt;% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP, SALES95) %&gt;% # dropping unused variables
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">AREAID</th>
+<th align="left">CAR</th>
+<th align="right">YEAR</th>
+<th align="right">NTOTEXP</th>
+<th align="right">TOTEXP</th>
+<th align="right">SALES95</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">590100000</td>
+<td align="left">Kootenay</td>
+<td align="right">1986</td>
+<td align="right">859</td>
+<td align="right">22668829</td>
+<td align="right">24206805</td>
+</tr>
+<tr class="even">
+<td align="left">590200000</td>
+<td align="left">Okanagan</td>
+<td align="right">1986</td>
+<td align="right">4880</td>
+<td align="right">164948667</td>
+<td align="right">171604264</td>
+</tr>
+<tr class="odd">
+<td align="left">590300000</td>
+<td align="left">Thompson</td>
+<td align="right">1986</td>
+<td align="right">1010</td>
+<td align="right">45715690</td>
+<td align="right">45388395</td>
+</tr>
+<tr class="even">
+<td align="left">590400000</td>
+<td align="left">Mainland</td>
+<td align="right">1986</td>
+<td align="right">5705</td>
+<td align="right">510236751</td>
+<td align="right">589131848</td>
+</tr>
+<tr class="odd">
+<td align="left">590500000</td>
+<td align="left">Island</td>
+<td align="right">1986</td>
+<td align="right">2178</td>
+<td align="right">78102771</td>
+<td align="right">82810701</td>
+</tr>
+<tr class="even">
+<td align="left">590600000</td>
+<td align="left">Cariboo</td>
+<td align="right">1986</td>
+<td align="right">1056</td>
+<td align="right">39044885</td>
+<td align="right">35267832</td>
+</tr>
+<tr class="odd">
+<td align="left">590700000</td>
+<td align="left">Omineca</td>
+<td align="right">1986</td>
+<td align="right">1487</td>
+<td align="right">40202476</td>
+<td align="right">37143105</td>
+</tr>
+<tr class="even">
+<td align="left">590800000</td>
+<td align="left">Peace</td>
+<td align="right">1986</td>
+<td align="right">1797</td>
+<td align="right">74678741</td>
+<td align="right">73433618</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>levels(exp_rec_86_BC$CAR)</code></pre>
+<pre><code>## [1] &quot;Kootenay&quot; &quot;Okanagan&quot; &quot;Thompson&quot; &quot;Mainland&quot; &quot;Island&quot;   &quot;Cariboo&quot; 
+## [7] &quot;Omineca&quot;  &quot;Peace&quot;</code></pre>
+<p>1991 data:</p>
+<pre class="r"><code>exp_rec_91_BC$CAR &lt;- as_factor(as.character(exp_rec_91_BC$CAR)) #Re-naming to simplify names
+  levels(exp_rec_91_BC$CAR)&lt;-c(&quot;Kootenay&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Mainland&quot;, &quot;Island&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) 
+  
+exp_rec_91_BC$CAR %&gt;% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel(&quot;Island&quot;, &quot;Mainland&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) %&gt;% 
+  levels()</code></pre>
+<pre><code>## [1] &quot;Island&quot;   &quot;Mainland&quot; &quot;Okanagan&quot; &quot;Thompson&quot; &quot;Kootenay&quot; &quot;Cariboo&quot; 
+## [7] &quot;Omineca&quot;  &quot;Peace&quot;</code></pre>
+<pre class="r"><code>exp_rec_91_BC$SALES95 &lt;- as.numeric(exp_rec_91_BC$SALES95) # change to numeric
+str(exp_rec_91_BC) #check</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  8 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : Factor w/ 8 levels &quot;Kootenay&quot;,&quot;Okanagan&quot;,..: 1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;- Kootenay Region - Région de Kootenay&quot; &quot;- Okanagan Region - Région d'Okanagan&quot; &quot;- Thompson Region - Région de Thompson&quot; &quot;- Mainland Region - Région de Mainland&quot; ...
+##  $ TOTEXP  : num  2.73e+07 1.85e+08 5.30e+07 6.03e+08 9.49e+07 ...
+##  $ SALES95 : num  3.16e+07 2.05e+08 5.81e+07 7.41e+08 1.10e+08 ...
+##  $ NTOTEXP : num  883 4782 1143 5945 2308 ...</code></pre>
+<pre class="r"><code>exp_rec_91_BC %&gt;% 
+  mutate(YEAR = 1991) %&gt;% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP, SALES95) %&gt;% # dropping unused variables
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">AREAID</th>
+<th align="left">CAR</th>
+<th align="right">YEAR</th>
+<th align="right">NTOTEXP</th>
+<th align="right">TOTEXP</th>
+<th align="right">SALES95</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">590100000</td>
+<td align="left">Kootenay</td>
+<td align="right">1991</td>
+<td align="right">883</td>
+<td align="right">27278347</td>
+<td align="right">31563212</td>
+</tr>
+<tr class="even">
+<td align="left">590200000</td>
+<td align="left">Okanagan</td>
+<td align="right">1991</td>
+<td align="right">4782</td>
+<td align="right">185347117</td>
+<td align="right">205244759</td>
+</tr>
+<tr class="odd">
+<td align="left">590300000</td>
+<td align="left">Thompson</td>
+<td align="right">1991</td>
+<td align="right">1143</td>
+<td align="right">53004787</td>
+<td align="right">58097491</td>
+</tr>
+<tr class="even">
+<td align="left">590400000</td>
+<td align="left">Mainland</td>
+<td align="right">1991</td>
+<td align="right">5945</td>
+<td align="right">603421957</td>
+<td align="right">741417579</td>
+</tr>
+<tr class="odd">
+<td align="left">590500000</td>
+<td align="left">Island</td>
+<td align="right">1991</td>
+<td align="right">2308</td>
+<td align="right">94885002</td>
+<td align="right">110049496</td>
+</tr>
+<tr class="even">
+<td align="left">590600000</td>
+<td align="left">Cariboo</td>
+<td align="right">1991</td>
+<td align="right">954</td>
+<td align="right">42522224</td>
+<td align="right">42818952</td>
+</tr>
+<tr class="odd">
+<td align="left">590700000</td>
+<td align="left">Omineca</td>
+<td align="right">1991</td>
+<td align="right">1516</td>
+<td align="right">52490309</td>
+<td align="right">54286865</td>
+</tr>
+<tr class="even">
+<td align="left">590800000</td>
+<td align="left">Peace</td>
+<td align="right">1991</td>
+<td align="right">1694</td>
+<td align="right">67982621</td>
+<td align="right">77721618</td>
+</tr>
+</tbody>
+</table>
+<p>1996 Expenses data:</p>
+<pre class="r"><code>exp96_BC$CAR &lt;- as_factor(as.character(exp96_BC$CAR)) #Re-naming to simplify names
+  levels(exp96_BC$CAR)&lt;-c(&quot;Kootenay&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Mainland&quot;, &quot;Island&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) 
+  
+exp96_BC$CAR %&gt;% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel(&quot;Island&quot;, &quot;Mainland&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) %&gt;% 
+  levels()</code></pre>
+<pre><code>## [1] &quot;Island&quot;   &quot;Mainland&quot; &quot;Okanagan&quot; &quot;Thompson&quot; &quot;Kootenay&quot; &quot;Cariboo&quot; 
+## [7] &quot;Omineca&quot;  &quot;Peace&quot;</code></pre>
+<pre class="r"><code>exp96_BC$TOTEXP &lt;- as.numeric(exp96_BC$TOTEXP) # change to numeric
+str(exp96_BC) #check</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  7 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : Factor w/ 8 levels &quot;Kootenay&quot;,&quot;Okanagan&quot;,..: 1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;Vancouver Island - Coast&quot; &quot;Lower Mainland - Southwest&quot; &quot;Thompson - Okanagan&quot; &quot;Kootenay&quot; ...
+##  $ TOTEXP  : num  1.41e+08 9.12e+08 3.28e+08 5.16e+07 9.27e+07 ...
+##  $ NTOTEXP : num  2992 6671 5933 1425 1799 ...</code></pre>
+<pre class="r"><code>exp96_BC %&gt;% 
+  mutate(YEAR = 1996) %&gt;% # adding new column for year
+  select(AREAID, CAR, YEAR, NTOTEXP, TOTEXP) %&gt;% # dropping unused variables
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">AREAID</th>
+<th align="left">CAR</th>
+<th align="right">YEAR</th>
+<th align="right">NTOTEXP</th>
+<th align="right">TOTEXP</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">590100000</td>
+<td align="left">Kootenay</td>
+<td align="right">1996</td>
+<td align="right">2992</td>
+<td align="right">141269858</td>
+</tr>
+<tr class="even">
+<td align="left">590200000</td>
+<td align="left">Okanagan</td>
+<td align="right">1996</td>
+<td align="right">6671</td>
+<td align="right">911979947</td>
+</tr>
+<tr class="odd">
+<td align="left">590300000</td>
+<td align="left">Thompson</td>
+<td align="right">1996</td>
+<td align="right">5933</td>
+<td align="right">327700532</td>
+</tr>
+<tr class="even">
+<td align="left">590400000</td>
+<td align="left">Mainland</td>
+<td align="right">1996</td>
+<td align="right">1425</td>
+<td align="right">51611346</td>
+</tr>
+<tr class="odd">
+<td align="left">590500000</td>
+<td align="left">Island</td>
+<td align="right">1996</td>
+<td align="right">1799</td>
+<td align="right">92699616</td>
+</tr>
+<tr class="even">
+<td align="left">590600000</td>
+<td align="left">Cariboo</td>
+<td align="right">1996</td>
+<td align="right">222</td>
+<td align="right">4182989</td>
+</tr>
+<tr class="odd">
+<td align="left">590700000</td>
+<td align="left">Omineca</td>
+<td align="right">1996</td>
+<td align="right">970</td>
+<td align="right">42896925</td>
+</tr>
+<tr class="even">
+<td align="left">590800000</td>
+<td align="left">Peace</td>
+<td align="right">1996</td>
+<td align="right">1823</td>
+<td align="right">89380491</td>
+</tr>
+</tbody>
+</table>
+<p>1996 Receipts Data:</p>
+<pre class="r"><code>rec96_BC$CAR &lt;- as_factor(as.character(rec96_BC$CAR)) #Re-naming to simplify names
+  levels(rec96_BC$CAR)&lt;-c(&quot;Kootenay&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Mainland&quot;, &quot;Island&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) 
+  
+rec96_BC$CAR %&gt;% #Re-ordering (even though regions boundaries are different) to follow similar order to 2001 onwards
+  fct_relevel(&quot;Island&quot;, &quot;Mainland&quot;, &quot;Okanagan&quot;, &quot;Thompson&quot;, &quot;Kootenay&quot;, &quot;Cariboo&quot;, &quot;Omineca&quot;, &quot;Peace&quot;) %&gt;% 
+  levels()</code></pre>
+<pre><code>## [1] &quot;Island&quot;   &quot;Mainland&quot; &quot;Okanagan&quot; &quot;Thompson&quot; &quot;Kootenay&quot; &quot;Cariboo&quot; 
+## [7] &quot;Omineca&quot;  &quot;Peace&quot;</code></pre>
+<pre class="r"><code>rec96_BC$SALES95 &lt;- as.numeric(rec96_BC$SALES95) # change to numeric
+str(rec96_BC) #check</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    8 obs. of  6 variables:
+##  $ AREAID  : chr  &quot;590100000&quot; &quot;590200000&quot; &quot;590300000&quot; &quot;590400000&quot; ...
+##  $ PROV    : num  59 59 59 59 59 59 59 59
+##  $ CAR     : Factor w/ 8 levels &quot;Kootenay&quot;,&quot;Okanagan&quot;,..: 1 2 3 4 5 6 7 8
+##  $ CD      : num  0 0 0 0 0 0 0 0
+##  $ AREANAME: chr  &quot;Vancouver Island - Coast&quot; &quot;Lower Mainland - Southwest&quot; &quot;Thompson - Okanagan&quot; &quot;Kootenay&quot; ...
+##  $ SALES95 : num  1.46e+08 1.04e+09 3.57e+08 5.30e+07 9.10e+07 ...</code></pre>
+<pre class="r"><code>rec96_BC %&gt;% 
+  mutate(YEAR = 1996) %&gt;% # adding new column for year
+  select(AREAID, CAR, YEAR, SALES95) # dropping unused variables</code></pre>
+<pre><code>## # A tibble: 8 x 4
+##      AREAID      CAR  YEAR    SALES95
+##       &lt;chr&gt;   &lt;fctr&gt; &lt;dbl&gt;      &lt;dbl&gt;
+## 1 590100000 Kootenay  1996  145976943
+## 2 590200000 Okanagan  1996 1044151246
+## 3 590300000 Thompson  1996  357438787
+## 4 590400000 Mainland  1996   52974830
+## 5 590500000   Island  1996   91029538
+## 6 590600000  Cariboo  1996    3507944
+## 7 590700000  Omineca  1996   44247186
+## 8 590800000    Peace  1996   99890284</code></pre>
+<p>This is where things started to fall apart.</p>
+<p>Now this is data has been ‘wrangled’ and is [nearly] ready for some plotting.</p>
 </div>
 <div id="re-ordering-the-factors-in-a-principled-way" class="section level4">
-<h4>1.2.2 Re-ordering the factors in a principled way</h4>
+<h4>1.2.3 Re-ordering the factors in a principled way</h4>
 <p>Check default ordering..</p>
 <pre class="r"><code>rec_exp_06_BC$AGOPCAR %&gt;% 
   levels()</code></pre>
@@ -281,6 +772,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <th align="right">HDPROV</th>
 <th align="left">AGOPCAR</th>
 <th align="right">TOTEXP</th>
+<th align="right">NTOTEXP</th>
 <th align="right">VAL_SALESXFP</th>
 <th align="right">perc_exp</th>
 </tr>
@@ -290,6 +782,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Vancouver Island-Coast</td>
 <td align="right">155534407</td>
+<td align="right">2855</td>
 <td align="right">163694855</td>
 <td align="right">95.01484</td>
 </tr>
@@ -297,6 +790,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Lower Mainland-Southwest</td>
 <td align="right">1442818662</td>
+<td align="right">5410</td>
 <td align="right">1660504505</td>
 <td align="right">86.89038</td>
 </tr>
@@ -304,6 +798,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Thompson-Okanagan</td>
 <td align="right">423432858</td>
+<td align="right">5700</td>
 <td align="right">450234225</td>
 <td align="right">94.04724</td>
 </tr>
@@ -311,6 +806,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Kootenay</td>
 <td align="right">65363842</td>
+<td align="right">1349</td>
 <td align="right">69017516</td>
 <td align="right">94.70616</td>
 </tr>
@@ -318,6 +814,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Cariboo</td>
 <td align="right">108709039</td>
+<td align="right">1781</td>
 <td align="right">112290335</td>
 <td align="right">96.81068</td>
 </tr>
@@ -325,6 +822,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">North Coast</td>
 <td align="right">3079496</td>
+<td align="right">134</td>
 <td align="right">2687376</td>
 <td align="right">114.59118</td>
 </tr>
@@ -332,6 +830,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Nechako</td>
 <td align="right">53623366</td>
+<td align="right">886</td>
 <td align="right">54630348</td>
 <td align="right">98.15674</td>
 </tr>
@@ -339,6 +838,7 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 <td align="right">59</td>
 <td align="left">Peace River</td>
 <td align="right">130170675</td>
+<td align="right">1729</td>
 <td align="right">138904007</td>
 <td align="right">93.71269</td>
 </tr>
@@ -364,10 +864,9 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 </div>
 <div id="writing-to-file-reading" class="section level2">
 <h2>2. Writing to file, Reading</h2>
-<p>I’m going to try writing the re-ordered dataframe to a csv file. I tried using the following code chunk but got an error:</p>
-<p>fct_reorder(rec_exp_06_BC<span class="math inline">\(AGOPCAR, rec_exp_06_BC\)</span>VAL_SALESXFP, .desc = TRUE) %&gt;% write_csv(“order_sales_06.csv”)</p>
-<p>Using the <code>fct_reorder</code> function won’t allow me to do this, as it doesn’t re-order the whole dataframe in this case.</p>
-<p>I found this other way to re-order by the dataframe using indexing:</p>
+<p>I’m going to try writing the re-ordered dataframe to a csv file.</p>
+<p>First I tried using the <code>fct_reorder</code> function and then piping that into the <code>write_csv</code> command, but that prompts an error message, I think because the <code>fct_reorder</code> doesn’t re-order the whole dataframe.</p>
+<p>So instead, I found this other way to re-order by the dataframe using indexing:</p>
 <pre class="r"><code>rec_exp_06_BC[order(rec_exp_06_BC$VAL_SALESXFP, decreasing = TRUE),] %&gt;% # Keep columns the way they are but order the rows by Sales
   write_csv(&quot;rec_exp_06_BC.csv&quot;)</code></pre>
 <p>Now I’ll bring it back in…</p>
@@ -377,19 +876,20 @@ str(rec_exp_06_BC$VAL_SALESXFP)</code></pre>
 ##   HDPROV = col_integer(),
 ##   AGOPCAR = col_character(),
 ##   TOTEXP = col_integer(),
+##   NTOTEXP = col_integer(),
 ##   VAL_SALESXFP = col_integer()
 ## )</code></pre>
-<pre><code>## # A tibble: 8 x 4
-##   HDPROV                  AGOPCAR     TOTEXP VAL_SALESXFP
-##    &lt;int&gt;                    &lt;chr&gt;      &lt;int&gt;        &lt;int&gt;
-## 1     59 Lower Mainland-Southwest 1442818662   1660504505
-## 2     59        Thompson-Okanagan  423432858    450234225
-## 3     59   Vancouver Island-Coast  155534407    163694855
-## 4     59              Peace River  130170675    138904007
-## 5     59                  Cariboo  108709039    112290335
-## 6     59                 Kootenay   65363842     69017516
-## 7     59                  Nechako   53623366     54630348
-## 8     59              North Coast    3079496      2687376</code></pre>
+<pre><code>## # A tibble: 8 x 5
+##   HDPROV                  AGOPCAR     TOTEXP NTOTEXP VAL_SALESXFP
+##    &lt;int&gt;                    &lt;chr&gt;      &lt;int&gt;   &lt;int&gt;        &lt;int&gt;
+## 1     59 Lower Mainland-Southwest 1442818662    5410   1660504505
+## 2     59        Thompson-Okanagan  423432858    5700    450234225
+## 3     59   Vancouver Island-Coast  155534407    2855    163694855
+## 4     59              Peace River  130170675    1729    138904007
+## 5     59                  Cariboo  108709039    1781    112290335
+## 6     59                 Kootenay   65363842    1349     69017516
+## 7     59                  Nechako   53623366     886     54630348
+## 8     59              North Coast    3079496     134      2687376</code></pre>
 <p>While the csv file is still in the specified order, the AGOPCAR variable is now a character, once again. So some information has been lost.</p>
 </div>
 <div id="visualization-design" class="section level2">
