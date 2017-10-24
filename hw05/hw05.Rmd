@@ -7,7 +7,6 @@ output:
 
 ## 0. Pre-amble
 
-
 I'm going to use both the gapminder dataset and a dataset from the Canadian Census of Agriculture to go through the exercises for hw05.
 
 First I'll load all of the packages I'm going to need for this assignment in one tidy chunk of code (including <a href="https://github.com/karthik/wesanderson">a new colour palette</a> that I downloaded...)
@@ -402,14 +401,14 @@ First I tried using the ```fct_reorder``` function and then piping that into the
 So instead, I found this other way to re-order by the dataframe using indexing:
 
 ```{r}
-rec_exp_06_BC[order(rec_exp_06_BC$VAL_SALESXFP, decreasing = TRUE),] %>% # Keep columns the way they are but order the rows by Sales
-  write_csv("rec_exp_06_BC.csv")
+exp_rec_06[order(exp_rec_06$sales, decreasing = TRUE),] %>% # Keep columns the way they are but order the rows by Sales
+  write_csv("exp_rec_06.csv")
 ```
 
 Now I'll bring it back in...
 
 ```{r}
-read_csv("rec_exp_06_BC.csv")
+read_csv("exp_rec_06.csv")
 ```
 
 While the csv file is still in the specified order, the AGOPCAR variable is now a character, once again. So some information has been lost.
@@ -432,28 +431,43 @@ exp_rec_01_11 %>%
 ```
 
 
-### 3.2 Plot 2
+### 3.2 Plot 2 & Writing to file
 
-I
+For this second plot, I'd like to incorporate some more information using some different visualization tips. I don't have a whole lot to work with for this small dataframe, but I'd like to incorporate a measure for the difference between farm sales and expenses, as well as communicate the number of farms reporting in each of the regions. I'll also spiff up the colour scheme and labels, etc. 
+
 
 ```{r fig.width=10}
-exp_rec_01_11 %>% 
+reg_profit <- exp_rec_01_11 %>% 
   mutate(prof = (sales - totexp)) %>% 
   filter(CAR %in% c("Lower Mainland-Southwest", "Thompson-Okanagan", "Vancouver Island-Coast", "Peace River", "Cariboo")) %>% 
-  ggplot(aes(year, prof, colour = CAR)) +
+  ggplot(aes(year, prof, colour = CAR, size=nfarms)) +
   geom_line(size=1.5) +
+  geom_point() +
   scale_color_manual(values = wes_palette("Darjeeling")) +
   scale_x_continuous(breaks=c(2001,2006,2011)) +
-  labs(x="Year", y="Estimated Farm Profit", title="Regional Difference Between Farm Sales and Expenses") +
+  labs(x="Year", y="Regional Farm Sales - Expenses", title="Regional Difference Between Farm Sales and Expenses") +
   theme(axis.title = element_text(size=14),
         plot.title = element_text(size=16, hjust = 0.5),
         legend.position = "right",
         legend.direction = "vertical",
-        legend.title = element_text(size=12))
+        legend.title = element_text(size=12)) 
+```
+
+```{r}
+ ggsave("reg_profit.pdf", plot = reg_profit, width = 9, height = 7) # specicying the plot as the default is to save the last displayed plot (not necessarily the last code chunk)
+  ggsave("reg_profit.png", plot = reg_profit, width = 9, height = 7) # saving as both png (raster) and pdf (vector) formats to working directory
 ```
 
 
-## 4. Writing figures to file
+![**Plot 2**. New and improved visual representation of my simple yet extremely labour-intensive new dataset for the sales and expenses on farms in Census Agricultural Regions in B.C.](/Users/susannaklassen/Documents/PhD/STAT 545/stat545-hw-klassen-susanna/hw05/reg_profit.png)
+
+From this figure we can clearly see that the the Lower Mainland-Southwest stands out clearly as having higher sales relative to farm business operating expenses. This was also visible in my first plot, but with the new measure (encompassing values of sales and expenses) we can see a few new things: 
+1. The Thompson-Okanagan region is much closer to values seen in other region (and therefore must have high operating expenses)
+2. Lower Mainland-Southwest is the only region showing a clear increase in what I am calling 'Estimated Farm Profit'
+3. One could assume that there are more farms in the region clearly showing high sales relative to expenses, but it is clear from this second plot that the Thompson-Okanagan region also has a high number of farms, but are clearly not as high net value at the regional level.
+
+
+
 
 
 

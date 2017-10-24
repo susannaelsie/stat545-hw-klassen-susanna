@@ -3,7 +3,7 @@
 
 ## What I did
 
-Throughout this assignment, I waffled between working with the Gapminder dataset (fun, interesting, and easy to work with) and working with data from the Canadian Agricultural Census (lots of work to clean and import, each year of data is in a different file, and messy in terms of variables, but applicable to my research). Ultimately, this homework is a bit of a disaster, because I kept trying to work with the latter, but often met barriers I was not able to surmount in the time that I had. I thought it better to include my failed attempts at doing something new and different than to simply include where my tasks were successful, so, please bear with me as I try to guide you through my process.
+Throughout this assignment, I waffled between working with the Gapminder dataset (fun, interesting, and easy to work with) and working with data from the Canadian Agricultural Census (lots of work to clean and import, each year of data is in a different file, and messy in terms of variables, but applicable to my research). Ultimately, this homework was a bit of a roller coaster, because I chose the latter, but often met barriers I was not able to surmount in the time that I had. I thought it better to include my failed attempts at doing something new and different than to simply include where my tasks were successful, so, please bear with me in this assignment as I guide you through my process, and when we arrive at some fairly simple figures at the end, recall that I learned more then I bargained for in the process.
 
 ## Ag Census Data
 
@@ -45,3 +45,4 @@ I learned about halfway through this assignment that in fact the Census Agricult
 - I had encountered some strange repeated observations after selecting and filtering to make my smaller BC datasets, which I realized were created 
 - Renaming factor levels: http://www.cookbook-r.com/Manipulating_data/Renaming_levels_of_a_factor/
 - Challenges working with these ag census datasets as I ended up with a dataframe with only one obesrvation per factor level, which was not really the point of the excercise
+- I am still a bit confused about how to deal with factors, but at least I can tell when something is wrong!!
