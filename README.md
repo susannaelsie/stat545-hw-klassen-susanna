@@ -1,4 +1,4 @@
-# stat545-hw-klassen-susanna
+# Susanna's Github repo for STAT545
 
 Welcome to my general github repo for homework assignments in STAT 545. 
 
@@ -8,7 +8,7 @@ Here are the links to my markdown files for my homework assignments:
 2. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw02/hw02.md">Homework 2</a> 
 3. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw03/hw03.md">Homework 3</a> 
 4. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw04/hw04.md">Homework 4</a> 
-5. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md>Homework 5</a>
+5. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md">Homework 5</a>
 
 
 ## About me
