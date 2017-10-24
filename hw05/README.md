@@ -1,8 +1,8 @@
 # Homework 05
 ## By Susanna Klassen
 
-<a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.html">html file for hw05</a>
-<a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md">md file for hw05</a>
+- <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.html">html file for hw05</a>
+- <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md">md file for hw05</a>
 
 ## What I did
 
