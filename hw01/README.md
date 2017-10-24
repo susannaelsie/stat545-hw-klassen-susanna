@@ -2,20 +2,6 @@
 
 Welcome one and all to my first homework assignment (hw01)! For more details on the course, and this and other assigments, see the course <a href=http://stat545.com>Website</a>.
 
-## About me
-
-I am a first year PhD Student at the Institute for Resources, Environment and Sustainability. My research looks at how we can create more sustainable agri-food systems, specifically looking at the social and environmental performance of organic agriculture in the Canadian context. 
-
-My research uses a mixed-methods approach (using both qualitative and quantitative data), following the words <a href="https://quoteinvestigator.com/2010/05/26/everything-counts-einstein/">often attributed to Albert Einstein</a>:
-
-> "Not everything that counts can be counted, and not everything that can be counted counts."
->
-> William Bruce Cameron 
-
-I'm excited to be learning how to wrangle data so that I can apply it to my project!
-
-![](https://i.pinimg.com/originals/15/10/29/15102907439824fb616f964e9dff5415.gif)
-
 ## Notes about process
 
 As much as possible, I edited this README.md file using markdown in RStudio. For some minor and quick changes (e.g. adding a period at the end of a sentence), I sometimes used my browser (twice), but for all significant changes or edits (adding Markdown syntax of any kind), I made changes via my local repo in RStudio. 
