@@ -1,0 +1,80 @@
+---
+title: "Gapminder_Data_hw01"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Gapminder Dataset for hw01
+
+## Load packages
+
+Assuming both the gapminder and tidyverse packages are installed, load them using the following commands:
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+
+## Explore dataset
+
+Using the tidyverse meta-package, we can view the gapminder data frame as a 'tibble', and have a cleaner view of the dataset. 'names' returns all of the names in the dataframe, 'head' returns the first parts of the data frame, etc.
+
+```{r}
+gapminder
+names(gapminder)
+head(gapminder)
+tail(gapminder)
+glimpse(gapminder)
+```
+
+To obtain a basic statistical overview:
+
+```{r}
+summary(gapminder)
+```
+### Make some plots
+
+Using base R graphics, make some figures!
+
+```{r}
+plot(lifeExp ~ year, gapminder)
+plot(lifeExp ~ gdpPercap, gapminder)
+plot(lifeExp ~ log(gdpPercap), gapminder)
+```
+
+## Isolate a variable in the frame
+
+To isolate one variable in the data frame, you use the $ sign. 
+
+### Life Expectancy
+
+```{r}
+head(gapminder$lifeExp)
+summary(gapminder$lifeExp)
+hist(gapminder$lifeExp)
+```
+
+### Distribution of observations across continents
+
+```{r}
+table(gapminder$continent)
+barplot(table(gapminder$continent))
+```
+
+## Blindly make figures (for now)
+
+```{r}
+p <- ggplot(filter(gapminder, continent != "Oceania"),
+            aes(x = gdpPercap, y = lifeExp)) # just initializes
+p <- p + scale_x_log10() # log the x axis the right way
+p + geom_point() # scatterplot
+p + geom_point(aes(color = continent)) # map continent to color
+p + geom_point(alpha = (1/3), size = 3) + geom_smooth(lwd = 3, se = FALSE)
+p + geom_point(alpha = (1/3), size = 3) + facet_wrap(~ continent) +
+  geom_smooth(lwd = 1.5, se = FALSE)
+  ```
