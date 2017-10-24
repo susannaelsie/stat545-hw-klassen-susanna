@@ -4,11 +4,11 @@ Welcome to my general github repo for homework assignments in STAT 545.
 
 Here are the links to my markdown files for my homework assignments:
 
-1. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw01/Gapminder_Data_hw01.md">Homework 1</a>
-2. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw02/hw02.md">Homework 2</a> 
-3. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw03/hw03.md">Homework 3</a> 
-4. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw04/hw04.md">Homework 4</a> 
-5. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05/hw05.md">Homework 5</a>
+1. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw01_Rmd%20%26%20repo%20mgmt/Gapminder_Data_hw01.md">Homework 1</a>
+2. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw02_exploration%20%26%20dplyr%20intro/hw02.md">Homework 2</a> 
+3. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw03_dplyr%20%26%20ggplot2%20basics/hw03.md">Homework 3</a> 
+4. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw04_re-shaping%2C%20joining/hw04.md">Homework 4</a> 
+5. <a href="https://github.com/susannaelsie/stat545-hw-klassen-susanna/blob/master/hw05_factors%2C%20plot%20management/hw05.md">Homework 5</a>
 
 
 ## About me
